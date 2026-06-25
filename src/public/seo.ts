@@ -1,7 +1,7 @@
 import { event, faqs, modules } from "@/public/data/event";
 import { absoluteUrl, type JsonLd } from "@/shared/utils/seo";
 
-const DEFAULT_IMAGE = "/digital-dreams-logo.png";
+const DEFAULT_IMAGE = "/images/digital-dreams-logo.png";
 
 export const bootcampSeoDefaults = {
   siteName: `${event.name} ${event.year}`,

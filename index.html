@@ -3,6 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--
+      PLACEHOLDER DOMAIN: https://kids-coding-bootcamp.digitaldreams.ng is used for
+      all absolute URLs below (og:url, og:image, twitter:image, canonical, JSON-LD)
+      and in public/robots.txt + public/sitemap.xml. Replace it everywhere with the
+      real production domain on deploy. Social link previews won't resolve until the
+      og:image URL points at a live, publicly reachable host.
+    -->
+
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#F8A018" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -14,19 +23,69 @@
     <meta property="og:title" content="Kids Coding Bootcamp 2026 | Digital Dreams Academy" />
     <meta property="og:description" content="A hands-on onsite and online coding bootcamp for kids ages 7-15 in Enugu, with Scratch, web development, Python, robotics, Android, AI and design." />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_NG" />
     <meta property="og:url" content="https://kids-coding-bootcamp.digitaldreams.ng/" />
-    <meta property="og:image" content="https://kids-coding-bootcamp.digitaldreams.ng/digital-dreams-logo.png" />
-    <meta property="og:image:alt" content="Digital Dreams Kids Coding Bootcamp logo" />
+    <meta property="og:image" content="https://kids-coding-bootcamp.digitaldreams.ng/images/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Kids Coding Bootcamp 2026 by Digital Dreams — Learn. Create. Code. Innovate." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Kids Coding Bootcamp 2026 | Digital Dreams Academy" />
     <meta name="twitter:description" content="Register kids ages 7-15 for a hands-on coding bootcamp in Enugu or online." />
-    <meta name="twitter:image" content="https://kids-coding-bootcamp.digitaldreams.ng/digital-dreams-logo.png" />
+    <meta name="twitter:image" content="https://kids-coding-bootcamp.digitaldreams.ng/images/og-image.png" />
     <link rel="canonical" href="https://kids-coding-bootcamp.digitaldreams.ng/" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <title>Kids Coding Bootcamp 2026 | Digital Dreams Academy</title>
+
+    <!-- Structured data — helps search engines understand the program -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": "Kids Coding Bootcamp 2026",
+        "description": "A hands-on coding bootcamp — onsite and online — where kids ages 7–15 build real software, games and robots across 8 courses.",
+        "url": "https://kids-coding-bootcamp.digitaldreams.ng/",
+        "image": "https://kids-coding-bootcamp.digitaldreams.ng/images/og-image.png",
+        "inLanguage": "en",
+        "provider": {
+          "@type": "EducationalOrganization",
+          "name": "Digital Dreams",
+          "url": "https://digitaldreamsng.com",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "No. 1 Nwodo Street, GRA",
+            "addressLocality": "Enugu",
+            "addressCountry": "NG"
+          },
+          "sameAs": [
+            "https://digitaldreamsng.com",
+            "https://www.facebook.com/digitaldreamsng/",
+            "https://x.com/digitaldreamsng",
+            "https://www.instagram.com/digitaldreamslimited/"
+          ]
+        },
+        "hasCourseInstance": [
+          {
+            "@type": "CourseInstance",
+            "name": "Marvel Track",
+            "courseMode": ["onsite", "online"],
+            "startDate": "2026-08-01",
+            "courseWorkload": "P1M"
+          },
+          {
+            "@type": "CourseInstance",
+            "name": "Genius Track",
+            "courseMode": ["onsite", "online"],
+            "startDate": "2026-07-01",
+            "courseWorkload": "P2M"
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

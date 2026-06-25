@@ -6,6 +6,8 @@ import { shareBadgeImage } from "@/public/badge/share";
 export type Step = "input" | "result";
 
 export const MAX_PHOTO_MB = 6;
+/** Image formats the badge canvas can reliably render and export. */
+export const ACCEPTED_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 const TOAST_MS = 2600;
 const CELEBRATE_DELAY_MS = 140;
 
@@ -63,14 +65,17 @@ export function useBadgeStudio() {
   function onPickPhoto(file: File | undefined) {
     setError("");
     if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setError("That file isn't an image. Try a JPG or PNG.");
-      return;
-    }
+    // 1) Max size first — cheapest check, and the most common rejection.
     if (file.size > MAX_PHOTO_MB * 1024 * 1024) {
       setError(`That photo is over ${MAX_PHOTO_MB}MB. Pick a smaller one.`);
       return;
     }
+    // 2) Must be a supported image format (not just any image/*).
+    if (!(ACCEPTED_PHOTO_TYPES as readonly string[]).includes(file.type)) {
+      setError("Please upload a JPG, PNG or WebP image.");
+      return;
+    }
+    // 3) Decode it to confirm the bytes are a real, readable image.
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {

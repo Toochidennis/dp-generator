@@ -1,6 +1,6 @@
 import { ArrowRight, Check, ImagePlus, Sparkles, Trash2 } from "lucide-react";
 import { event } from "@/public/data/event";
-import { type BadgeStudio, MAX_PHOTO_MB } from "@/public/hooks/useBadgeStudio";
+import { ACCEPTED_PHOTO_TYPES, type BadgeStudio, MAX_PHOTO_MB } from "@/public/hooks/useBadgeStudio";
 import { StepDots } from "@/public/components/badge/StepDots";
 
 /** Step 1 — collect the attendee's name and photo. */
@@ -52,7 +52,7 @@ export function BadgeInputStep({ studio }: { studio: BadgeStudio }) {
             <input
               ref={studio.refs.fileRef}
               type="file"
-              accept="image/*"
+              accept={ACCEPTED_PHOTO_TYPES.join(",")}
               onChange={(e) => studio.onPickPhoto(e.target.files?.[0])}
               className="sr-only"
               id="badge-photo"
@@ -83,7 +83,7 @@ export function BadgeInputStep({ studio }: { studio: BadgeStudio }) {
               </label>
             )}
             <span className="mt-1.5 block text-xs text-ink/45">
-              JPG or PNG, up to {MAX_PHOTO_MB}MB. Required to generate your badge.
+              JPG, PNG or WebP, up to {MAX_PHOTO_MB}MB. Required to generate your badge.
             </span>
           </label>
 

@@ -61,7 +61,7 @@ export function Seo({
   title,
   description,
   path = "/",
-  image = "/digital-dreams-logo.png",
+  image = "/images/digital-dreams-logo.png",
   type = "website",
   robots = "index, follow",
   siteName,

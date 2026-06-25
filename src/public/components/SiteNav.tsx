@@ -7,7 +7,7 @@ function Logo() {
   return (
     <Link to="/" className="inline-flex items-center gap-2.5" aria-label={`${event.brand} — home`}>
       <span className="inline-flex items-center rounded-xl border-2 border-ink bg-ink px-2.5 py-1.5">
-        <img src="/digital-dreams-logo.png" alt="Digital Dreams" className="h-5 w-auto object-contain sm:h-[22px]" />
+        <img src="/images/digital-dreams-logo.png" alt="Digital Dreams" className="h-5 w-auto object-contain sm:h-[22px]" />
       </span>
       <span className="hidden font-display text-sm font-bold leading-none text-ink sm:inline">
         Kids Coding

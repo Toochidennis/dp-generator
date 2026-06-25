@@ -1,16 +1,16 @@
-const CACHE_VERSION = "kids-coding-bootcamp-v1";
+const CACHE_VERSION = "kids-coding-bootcamp-v2";
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const CORE_ASSETS = [
   "/",
   "/index.html",
   "/offline.html",
   "/site.webmanifest",
-  "/digital-dreams-logo.png",
+  "/images/digital-dreams-logo.png",
   "/favicon.ico",
-  "/favicon-32x32.png",
+  "/icons/favicon-32x32.png",
   "/apple-touch-icon.png",
-  "/icon-192.png",
-  "/icon-512.png",
+  "/icons/icon-192.png",
+  "/icons/icon-512.png",
 ];
 
 self.addEventListener("install", (event) => {

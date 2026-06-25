@@ -9,7 +9,7 @@ export function SiteFooter() {
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <span className="inline-flex items-center rounded-xl border-2 border-white/15 bg-white/5 px-3 py-2">
-              <img src="/digital-dreams-logo.png" alt="Digital Dreams" className="h-7 w-auto object-contain" />
+              <img src="/images/digital-dreams-logo.png" alt="Digital Dreams" className="h-7 w-auto object-contain" />
             </span>
             <p className="mt-5 max-w-sm text-sm leading-7 text-white/65">
               {event.name} is run by {event.brand} — a top-10 Nigerian ICT firm training developers since 2007.
