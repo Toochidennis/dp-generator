@@ -5,12 +5,15 @@ import { SiteFooter } from "@/public/components/SiteFooter";
 import { BadgeInputStep } from "@/public/components/badge/BadgeInputStep";
 import { BadgeResultStep } from "@/public/components/badge/BadgeResultStep";
 import { useBadgeStudio } from "@/public/hooks/useBadgeStudio";
+import { Seo } from "@/shared/components/Seo";
+import { badgeSeo, badgeStructuredData, bootcampSeoDefaults } from "@/public/seo";
 
 export function BadgePage() {
   const studio = useBadgeStudio();
 
   return (
     <div className="kc min-h-screen">
+      <Seo {...bootcampSeoDefaults} {...badgeSeo} path="/badge" jsonLd={badgeStructuredData()} />
       <SiteNav variant="sub" />
 
       <main className="kc-paper-dots">

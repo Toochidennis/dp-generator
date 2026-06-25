@@ -23,6 +23,8 @@ import { CodeChip } from "@/public/components/CodeChip";
 import { FlipClock } from "@/public/components/FlipClock";
 import { useReveal } from "@/public/lib/useReveal";
 import { accentBg, accentText, accentTint } from "@/public/lib/accents";
+import { Seo } from "@/shared/components/Seo";
+import { bootcampSeoDefaults, landingSeo, landingStructuredData } from "@/public/seo";
 import {
   about,
   codeBlocks,
@@ -401,6 +403,7 @@ export function LandingPage() {
   const ref = useReveal<HTMLDivElement>();
   return (
     <div ref={ref} className="kc min-h-screen">
+      <Seo {...bootcampSeoDefaults} {...landingSeo} path="/" jsonLd={landingStructuredData()} />
       <SiteNav variant="landing" />
       <main>
         <Hero />

@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
+import { Seo } from "@/shared/components/Seo";
 import { LoadingState } from "@/shared/components/ui/states";
 import { LandingPage } from "@/public/pages/LandingPage";
 import { BadgePage } from "@/public/pages/BadgePage";
@@ -23,6 +24,12 @@ function FullPageLoader() {
 function NotFound() {
   return (
     <div className="grid min-h-screen place-items-center bg-[#f3f7fc] p-6 text-center">
+      <Seo
+        title="Page Not Found | Kids Coding Bootcamp"
+        description="The requested Kids Coding Bootcamp page could not be found."
+        path="/404"
+        robots="noindex, nofollow"
+      />
       <div>
         <p className="font-[Manrope] text-5xl font-extrabold text-slate-300">404</p>
         <p className="mt-2 text-sm font-bold text-slate-600">This page could not be found.</p>

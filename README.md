@@ -108,11 +108,20 @@ Copy `.env.example` to `.env`:
 ```bash
 VITE_USE_MOCKS=true                          # false → use the real backend
 VITE_API_BASE_URL=https://api.example.com    # leave empty for same-origin
+VITE_SITE_URL=https://kids-coding-bootcamp.digitaldreams.ng
 ```
 
 With `VITE_USE_MOCKS=false`, the same service layer calls the real endpoints
 (`/api/admin/*`, `/api/public/programs/:slug`, `/api/public/programs/:slug/generate`,
 `/api/public/generations/:id`). No component changes are needed to switch.
+
+Set `VITE_SITE_URL` to the deployed public origin so canonical URLs and social
+metadata point at the production site.
+
+The public bootcamp site also ships as an installable PWA. Production builds
+register `/sw.js`, cache the public shell and core assets, and use
+`/offline.html` as the offline fallback. The admin area and API routes are kept
+online-only.
 
 ## Develop
 

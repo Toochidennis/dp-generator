@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { CalendarRange, FileStack, LayoutDashboard, LayoutTemplate, Menu, Settings, X } from "lucide-react";
 import { BrandMark } from "@/shared/components/BrandMark";
+import { Seo } from "@/shared/components/Seo";
 import { USE_MOCKS } from "@/shared/services/config";
 
 const nav = [
@@ -38,6 +39,12 @@ export function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-[#f3f7fc] lg:flex">
+      <Seo
+        title="Admin | Attendance Generator"
+        description="Private administration area for managing programs, templates and generated attendance badges."
+        path="/admin"
+        robots="noindex, nofollow"
+      />
       {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
         <div className="flex h-16 items-center gap-2 border-b border-slate-100 px-5">

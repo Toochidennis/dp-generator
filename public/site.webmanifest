@@ -1,0 +1,27 @@
+{
+  "id": "/",
+  "name": "Kids Coding Bootcamp 2026",
+  "short_name": "Coding Bootcamp",
+  "description": "Digital Dreams Kids Coding Bootcamp for ages 7-15 in Enugu and online.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "categories": ["education", "kids", "productivity"],
+  "background_color": "#F9F4E8",
+  "theme_color": "#F8A018",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
