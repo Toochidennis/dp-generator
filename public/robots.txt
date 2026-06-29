@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+# Certificate is unlisted — shared directly with completers after the program.
+Disallow: /certificate
 
 Sitemap: https://kids-coding-bootcamp.digitaldreams.ng/sitemap.xml

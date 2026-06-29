@@ -4,6 +4,7 @@ import { Seo } from "@/shared/components/Seo";
 import { LoadingState } from "@/shared/components/ui/states";
 import { LandingPage } from "@/public/pages/LandingPage";
 import { BadgePage } from "@/public/pages/BadgePage";
+import { CertificatePage } from "@/public/pages/CertificatePage";
 
 const AdminLayout = lazy(() => import("@/admin/AdminLayout").then((m) => ({ default: m.AdminLayout })));
 const DashboardPage = lazy(() => import("@/admin/pages/DashboardPage").then((m) => ({ default: m.DashboardPage })));
@@ -46,6 +47,7 @@ export default function App() {
         {/* Public microsite — Kids Coding Bootcamp */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/badge" element={<BadgePage />} />
+        <Route path="/certificate" element={<CertificatePage />} />
 
         {/* Admin */}
         <Route path="/admin" element={<AdminLayout />}>
