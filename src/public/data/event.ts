@@ -177,10 +177,6 @@ export const faqs: { q: string; a: string }[] = [
     a: "None at all. Total beginners are welcome, and we group children by age and pace so everyone is challenged at the right level.",
   },
   {
-    q: "What should they bring?",
-    a: "Just curiosity and a water bottle. We provide laptops, robots, all materials, and a daily snack. Lunch is included.",
-  },
-  {
     q: "How big are the groups?",
     a: "Small on purpose — never more than eight children per coach, so every kid gets real attention and keyboard time.",
   },

@@ -108,7 +108,7 @@ Copy `.env.example` to `.env`:
 ```bash
 VITE_USE_MOCKS=true                          # false → use the real backend
 VITE_API_BASE_URL=https://api.example.com    # leave empty for same-origin
-VITE_SITE_URL=https://kids-coding-bootcamp.digitaldreams.ng
+VITE_SITE_URL=https://dp.digitaldreamsng.com
 ```
 
 With `VITE_USE_MOCKS=false`, the same service layer calls the real endpoints

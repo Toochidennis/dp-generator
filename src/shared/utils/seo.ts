@@ -1,4 +1,4 @@
-const DEFAULT_SITE_URL = "https://kids-coding-bootcamp.digitaldreams.ng";
+const DEFAULT_SITE_URL = "https://dp.digitaldreamsng.com";
 
 export type JsonLd = Record<string, unknown>;
 
