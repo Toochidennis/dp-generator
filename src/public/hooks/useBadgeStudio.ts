@@ -6,6 +6,8 @@ import { shareBadgeImage } from "@/public/badge/share";
 export type Step = "input" | "result";
 
 export const MAX_PHOTO_MB = 6;
+/** Hard cap on the attendee name — keeps it within the badge's single-line name bar. */
+export const NAME_MAX_LENGTH = 28;
 /** Image formats the badge canvas can reliably render and export. */
 export const ACCEPTED_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 const TOAST_MS = 2600;

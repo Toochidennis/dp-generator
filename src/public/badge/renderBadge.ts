@@ -6,17 +6,13 @@
  * element (logo, header, track cards, course list, QR, contacts); only the photo
  * and name change per attendee.
  *
- * Technique — "photo behind a cutout"
- * -----------------------------------
- * The template's photo slot (originally a solid blue box) has been knocked out to
- * a transparent hole in the `*_cutout.png` asset. We paint the attendee's photo
- * FIRST, then stamp the opaque template ON TOP. The photo shows only through the
- * hole, framed by the template's orange border. Consequences:
- *   • The rounded-corner shape comes entirely from the template art, so the photo
- *     can never reveal a sliver of the slot at its corners (a problem the earlier
- *     "rounded-clip on top" approach suffered from).
- *   • The orange border always stays crisp on top of the photo edges.
- * See `scripts/generate-badge-cutout.py` for how the cutout asset is produced.
+ * Technique — "photo inside the circle, on top"
+ * ---------------------------------------------
+ * The template's photo slot is a round orange disk framed by a blue + yellow ring.
+ * We stamp the opaque template FIRST, then draw the attendee's photo clipped to a
+ * circle that exactly covers the orange disk. Because the clip is a true circle
+ * (no corners) the edge is clean, and the ring — which sits just outside the disk —
+ * stays visible and frames the photo. The name is drawn last, inside the blue pill.
  *
  * Coordinate system
  * -----------------
@@ -31,7 +27,7 @@
  * (not the source SVG) because drawing an SVG onto a canvas can taint it and break
  * `toBlob`/`toDataURL` export.
  */
-import templateSrc from "@/public/DP_DESIGN_KIDS_CODING_BOOTCAMP_2026_cutout.png";
+import templateSrc from "@/public/DP_DESIGN_KIDS_CODING_BOOTCAMP_2026_B.png";
 
 export type BadgeInput = {
   name: string;
@@ -55,27 +51,31 @@ const CANVAS_H = BADGE_H * RENDER_SCALE; // 1620
 const BASE_FILL = "#EEF1F8";
 
 /**
- * Rectangle the photo is painted into (native px). It is slightly larger than the
- * transparent hole — measured at x[121,503] y[596,978] — so the photo fully backs
- * the hole's anti-aliased rounded corners; the template stamped on top hides the
- * ~7px of overflow. Kept centred on the hole (centre 312, 787).
+ * Circle the photo is drawn into (native px). Centre + radius were measured from
+ * the template's orange disk (centre 316,428; radius ≈211). The photo is drawn at
+ * radius 212 so it fully covers the disk's anti-aliased edge, leaving the blue +
+ * yellow ring — which sits just outside — to frame it.
  */
-const PHOTO_SLOT = { x: 114, y: 589, w: 396, h: 396 };
+const PHOTO_CIRCLE = { cx: 316, cy: 428, r: 212 } as const;
 
-/** Shown inside the slot when no photo is supplied (e.g. the live preview). */
-const PHOTO_PLACEHOLDER = "#D6DCEA";
-
-/** Attendee name — Montserrat SemiBold, centred under the photo slot. */
+/**
+ * Attendee name — Luckiest Guy 36pt, centred inside the blue pill. The pill is a
+ * single line, so unlike the old design the name never wraps: it renders at 36px,
+ * auto-shrinks a few steps for longer names, and truncates with an ellipsis as a
+ * final guard so it can never spill past the pill.
+ */
 const NAME = {
-  family: '"Montserrat"',
-  weight: 600,
-  size: 48, // 48pt in the 1620px-tall design (≈2.96% of height)
-  color: "#0040DC", // eyedropped from "Kate Okonkwo" in the reference sample
-  centerX: 312, // horizontal centre of the photo slot
-  centerY: 1037, // ~60px below the slot — matches the reference sample
-  maxWidth: 410, // keep within the left column, clear of the track cards
-  lineHeight: 1.16,
+  family: '"Luckiest Guy"',
+  weight: 400,
+  size: 36, // 36pt in the 1620px-tall design — matches the reference sample
+  color: "#007eff", // brand blue for the attendee name
+  centerX: 570, // horizontal centre of the pill
+  centerY: 721, // vertical centre of the pill
+  maxWidth: 560, // inner width of the pill, with a little breathing room
 } as const;
+
+/** Smallest the name is allowed to shrink to (as a fraction of `NAME.size`). */
+const NAME_MIN_SCALE = 0.72;
 
 /* ----------------------------- asset loading ------------------------------ */
 
@@ -113,8 +113,8 @@ export async function ensureBadgeAssets(): Promise<void> {
 /* -------------------------------- drawing --------------------------------- */
 
 /**
- * Draw the badge into `canvas`. Order matters: opaque base → photo → template
- * (which masks the photo to the slot) → name.
+ * Draw the badge into `canvas`. Order matters: opaque base → template → photo
+ * (clipped to the circle, on top of the orange disk) → name.
  */
 export function drawBadge(canvas: HTMLCanvasElement, input: BadgeInput) {
   canvas.width = CANVAS_W;
@@ -126,39 +126,38 @@ export function drawBadge(canvas: HTMLCanvasElement, input: BadgeInput) {
   ctx.fillStyle = BASE_FILL;
   ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
-  drawPhoto(ctx, input.photo);
   if (templateReady()) ctx.drawImage(templateImg as HTMLImageElement, 0, 0, CANVAS_W, CANVAS_H);
+  drawPhoto(ctx, input.photo);
   drawName(ctx, input.name);
 }
 
-/** Paint the photo into the slot (behind the template). Clipped to a plain rect —
- *  the rounded corners come from the cutout, so nothing can leak at the edges. */
+/** Draw the photo on top of the orange disk, clipped to the circle. When no photo
+ *  is supplied (e.g. the live preview) the template's own disk shows through. */
 function drawPhoto(ctx: CanvasRenderingContext2D, photo: HTMLImageElement | null) {
-  const { x, y, w, h } = PHOTO_SLOT;
+  if (!photo) return;
+  const { cx, cy, r } = PHOTO_CIRCLE;
   ctx.save();
   ctx.beginPath();
-  ctx.rect(x, y, w, h);
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.clip();
-  if (photo) {
-    drawCover(ctx, photo, x, y, w, h);
-  } else {
-    ctx.fillStyle = PHOTO_PLACEHOLDER;
-    ctx.fillRect(x, y, w, h);
-  }
+  drawCover(ctx, photo, cx - r, cy - r, r * 2, r * 2);
   ctx.restore();
 }
 
-/** Render the attendee name, centred and vertically balanced over one or two lines. */
+/** Render the attendee name on a single line inside the pill, auto-shrinking to fit. */
 function drawName(ctx: CanvasRenderingContext2D, rawName: string) {
-  const name = rawName.trim() || "Your Name";
+  const name = (rawName.trim() || "Your Name").toUpperCase();
   ctx.fillStyle = NAME.color;
   ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
+  ctx.textBaseline = "alphabetic";
 
-  const { lines, size } = fitName(ctx, name);
-  const lineH = size * NAME.lineHeight;
-  const top = NAME.centerY - ((lines.length - 1) * lineH) / 2;
-  lines.forEach((line, i) => ctx.fillText(line, NAME.centerX, top + i * lineH));
+  const { text, size } = fitName(ctx, name);
+  setNameFont(ctx, size);
+  // Centre on the glyphs' actual cap height, not the font's em box — Luckiest Guy
+  // has a tall internal em with no descenders, so "middle" sits visibly low.
+  const m = ctx.measureText(text);
+  const y = NAME.centerY + (m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) / 2;
+  ctx.fillText(text, NAME.centerX, y);
 }
 
 /* --------------------------------- helpers -------------------------------- */
@@ -181,39 +180,27 @@ function drawCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: numb
   ctx.drawImage(img, dx, dy, dw, dh);
 }
 
-type FittedName = { lines: string[]; size: number };
+type FittedName = { text: string; size: number };
 
 /**
- * Fit the name within `NAME.maxWidth`: try the full size on one line, then a
- * two-line split, shrinking through a few steps; finally truncate with an ellipsis.
+ * Fit the name on ONE line within `NAME.maxWidth`: try the full 36pt, shrink
+ * through a few steps down to `NAME_MIN_SCALE`, then truncate with an ellipsis so
+ * it can never overflow the pill.
  */
 function fitName(ctx: CanvasRenderingContext2D, name: string): FittedName {
-  const steps = [1, 0.875, 0.75, 0.6875];
+  const steps = [1, 0.92, 0.85, 0.78, NAME_MIN_SCALE];
   for (const factor of steps) {
     const size = NAME.size * factor;
     setNameFont(ctx, size);
-    if (ctx.measureText(name).width <= NAME.maxWidth) return { lines: [name], size };
-    const split = splitTwoLines(ctx, name, NAME.maxWidth);
-    if (split) return { lines: split, size };
+    if (ctx.measureText(name).width <= NAME.maxWidth) return { text: name, size };
   }
-  const size = NAME.size * steps[steps.length - 1];
+  const size = NAME.size * NAME_MIN_SCALE;
   setNameFont(ctx, size);
-  return { lines: [ellipsize(ctx, name, NAME.maxWidth)], size };
+  return { text: ellipsize(ctx, name, NAME.maxWidth), size };
 }
 
 function setNameFont(ctx: CanvasRenderingContext2D, size: number) {
   ctx.font = `${NAME.weight} ${size}px ${NAME.family}`;
-}
-
-/** Split a multi-word name into two lines that each fit `maxW`, or null if impossible. */
-function splitTwoLines(ctx: CanvasRenderingContext2D, name: string, maxW: number): [string, string] | null {
-  const words = name.split(/\s+/);
-  for (let i = 1; i < words.length; i++) {
-    const a = words.slice(0, i).join(" ");
-    const b = words.slice(i).join(" ");
-    if (ctx.measureText(a).width <= maxW && ctx.measureText(b).width <= maxW) return [a, b];
-  }
-  return null;
 }
 
 /** Trim `text` with a trailing ellipsis until it fits `maxW`. */

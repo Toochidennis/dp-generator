@@ -1,6 +1,6 @@
 import { ArrowRight, Check, ImagePlus, Sparkles, Trash2 } from "lucide-react";
 import { event } from "@/public/data/event";
-import { ACCEPTED_PHOTO_TYPES, type BadgeStudio, MAX_PHOTO_MB } from "@/public/hooks/useBadgeStudio";
+import { ACCEPTED_PHOTO_TYPES, type BadgeStudio, MAX_PHOTO_MB, NAME_MAX_LENGTH } from "@/public/hooks/useBadgeStudio";
 import { StepDots } from "@/public/components/badge/StepDots";
 
 /** Step 1 — collect the attendee's name and photo. */
@@ -34,13 +34,18 @@ export function BadgeInputStep({ studio }: { studio: BadgeStudio }) {
       >
         <div className="kc-block space-y-6 rounded-3xl bg-white p-6 sm:p-8">
           <label className="block">
-            <span className="kc-eyebrow mb-2 block text-ink/55">Attendee name</span>
+            <span className="kc-eyebrow mb-2 flex items-center justify-between text-ink/55">
+              <span>Attendee name</span>
+              <span className={name.length >= NAME_MAX_LENGTH ? "text-pop-coral" : "text-ink/40"}>
+                {name.length}/{NAME_MAX_LENGTH}
+              </span>
+            </span>
             <input
               type="text"
               value={name}
               onChange={(e) => studio.setName(e.target.value)}
               placeholder="e.g. Ada Okafor"
-              maxLength={40}
+              maxLength={NAME_MAX_LENGTH}
               autoComplete="name"
               autoFocus
               className="w-full rounded-xl border-2 border-ink/15 bg-paper px-4 py-3 text-base font-semibold text-ink outline-none transition placeholder:font-normal placeholder:text-ink/35 focus:border-pop-blue focus:bg-white"
