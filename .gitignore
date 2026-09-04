@@ -43,6 +43,16 @@ jspm_packages/
 .env.*
 !.env.example
 
+# PHP backend runtime state (api/helpers.php seeds these on first read —
+# committing them would let the next deploy clobber live admin edits).
+# admin.json is the one intentional exception: it's the seeded login.
+/data/*.json
+!/data/admin.json
+/uploads/templates/*
+!/uploads/templates/kids-coding-bootcamp-2026.png
+/uploads/banners/*
+!/uploads/banners/.gitkeep
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache

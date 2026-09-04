@@ -18,11 +18,13 @@ Everything revolves around the **Program**:
 Program → Templates → Public Link → Participant Generation → Download & Share
 ```
 
-> **Scope:** this repository is the **frontend only**. The backend (data
-> persistence, the official PDF/image rendering, file storage, signed URLs, and
-> auth) is built separately. To run before the backend exists, the app ships with
-> an isolated in-memory **mock** that behaves like the real API — flip one env
-> var to switch to the real thing.
+> **Scope:** the frontend (this SPA) ships alongside a small **PHP + JSON-file
+> backend** (`api/`, `data/`, `uploads/` — no database) that persists programs
+> and templates and handles admin login. It does **not** yet do the official
+> participant-facing PDF/image compositing (`api/generate.php` is a stub that
+> returns 501) — that's a separate, unbuilt feature. Until you point the app
+> at the PHP backend, it runs against an isolated in-memory **mock** that
+> behaves like the real API — flip one env var to switch.
 
 ## What you can do
 
@@ -44,13 +46,19 @@ Program → Templates → Public Link → Participant Generation → Download & 
 
 | Route | Audience | Purpose |
 | --- | --- | --- |
+| `/` | Public | Events portal — lists every active program, links to its page |
+| `/events/kids-coding-bootcamp` | Public | Kids Coding Bootcamp's own bespoke microsite |
+| `/events/kids-coding-bootcamp/badge` | Public | Its badge generator |
+| `/events/kids-coding-bootcamp/certificate` | Public | Its certificate generator |
+| `/events/:slug` | Public | Generic page for any other program (until it gets a bespoke one) |
+| `/admin/login` | Admin | Sign in (PHP session; skipped in mock mode) |
 | `/admin` | Admin | Dashboard |
 | `/admin/programs` | Admin | Programs list + create |
 | `/admin/programs/:id` | Admin | Program details (Overview / Templates / Generations / Settings) |
 | `/admin/templates` | Admin | All templates — upload, mark default |
 | `/admin/generations` | Admin | All participant generations |
 | `/admin/settings` | Admin | Platform configuration |
-| `/programs/:slug/attending` | Public | Participant attendance flow |
+| `/programs/:slug/attending` | Public | Participant attendance flow (mocked; not wired to a real generator yet) |
 | `/share/:generationId` | Public | Shareable generated card |
 
 ## Participant flow
@@ -111,12 +119,44 @@ VITE_API_BASE_URL=https://api.example.com    # leave empty for same-origin
 VITE_SITE_URL=https://dp.digitaldreamsng.com
 ```
 
-With `VITE_USE_MOCKS=false`, the same service layer calls the real endpoints
-(`/api/admin/*`, `/api/public/programs/:slug`, `/api/public/programs/:slug/generate`,
-`/api/public/generations/:id`). No component changes are needed to switch.
+With `VITE_USE_MOCKS=false`, the same service layer calls the PHP endpoints
+under `api/` (`programs.php`, `templates.php`, `generations.php`, `auth.php`,
+`generate.php`). No component changes are needed to switch.
 
 Set `VITE_SITE_URL` to the deployed public origin so canonical URLs and social
 metadata point at the production site.
+
+### PHP backend (`api/`, `data/`, `uploads/`)
+
+Plain PHP 8 + JSON files, no database — deploy these three folders next to
+the built `dist/` on any Apache/PHP host:
+
+- `data/*.json` holds programs (with their templates embedded), generations,
+  and the one admin account; seeded automatically on first read. `data/` must
+  be writable by the web server user and is blocked from direct web access
+  (`data/.htaccess`).
+- `uploads/templates/` and `uploads/banners/` hold images decoded from the
+  `data:` URLs the admin forms already produce client-side.
+- Admin auth is a PHP session + CSRF token (`api/auth.php`); `/admin/*` is
+  wide open in mock mode but redirects to `/admin/login` once
+  `VITE_USE_MOCKS=false`.
+- **Change the seeded admin password before going live** — it's in
+  `data/admin.json` as a bcrypt hash; generate a new one with
+  `php -r "echo password_hash('yourpass', PASSWORD_BCRYPT);"` and replace it.
+- `public/.htaccess` (copied into `dist/` by Vite) adds the SPA fallback
+  rewrite so deep links survive a refresh, without touching `/api/` or
+  `/uploads/`.
+
+To develop against the real backend locally (instead of mocks), run PHP's
+built-in server and point Vite's dev proxy at it — this keeps everything
+same-origin so the session cookie isn't dropped as cross-site:
+
+```bash
+php -S 127.0.0.1:8090 -t .          # serves api/, data/, uploads/
+PHP_DEV_PROXY_TARGET=http://127.0.0.1:8090 npm run dev
+```
+
+Then set `VITE_USE_MOCKS=false` and `VITE_API_BASE_URL=` (empty) in `.env`.
 
 The public bootcamp site also ships as an installable PWA. Production builds
 register `/sw.js`, cache the public shell and core assets, and use
@@ -135,6 +175,8 @@ npm run lint
 npm run build
 ```
 
-To preview the public side in dev, open a program link directly, e.g.
+`/` is the events portal (lists every program); Kids Coding Bootcamp's own
+microsite is at `/events/kids-coding-bootcamp`. To preview the mocked
+attendance flow, open a program link directly, e.g.
 `http://localhost:5173/programs/digital-dreams-tech-bootcamp-2026/attending`
 (in the admin Programs table, the **Link** button copies it for you).

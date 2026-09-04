@@ -5,6 +5,10 @@
 
 export type Accent = "brand" | "blue" | "mint" | "coral";
 
+// This microsite is mounted under its own path off the Digital Dreams events
+// portal (see src/public/pages/HomePage.tsx) rather than at the site root.
+export const EVENT_BASE_PATH = "/events/kids-coding-bootcamp";
+
 export const event = {
   brand: "Digital Dreams",
   brandTagline: "Let's make your dream a reality.",

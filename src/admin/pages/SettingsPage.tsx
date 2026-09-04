@@ -5,7 +5,7 @@ import { PageHeader } from "@/shared/components/ui/primitives";
 export function SettingsPage() {
   return (
     <div className="space-y-6">
-      <PageHeader title="Settings" subtitle="Platform configuration for the Attendance Generator." />
+      <PageHeader title="Settings" subtitle="Platform configuration for Digital Dreams Events." />
 
       <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
         <div className="flex items-center gap-2">
@@ -23,6 +23,7 @@ export function SettingsPage() {
           <Info size={14} className="mt-0.5 shrink-0 text-slate-400" />
           Set <code className="rounded bg-slate-200 px-1 font-mono text-[11px]">VITE_USE_MOCKS=false</code> and
           <code className="ml-1 rounded bg-slate-200 px-1 font-mono text-[11px]">VITE_API_BASE_URL</code> in your environment to switch to the real backend. No code changes are required.
+          The backend itself is plain PHP + JSON files under <code className="rounded bg-slate-200 px-1 font-mono text-[11px]">api/</code> and <code className="rounded bg-slate-200 px-1 font-mono text-[11px]">data/</code> — no database to provision.
         </p>
       </section>
 

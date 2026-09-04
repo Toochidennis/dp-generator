@@ -8,21 +8,24 @@ import * as mock from "@/shared/services/mock/mockApi";
 export const templateService = {
   getTemplates(signal?: AbortSignal): Promise<ProgramTemplate[]> {
     if (USE_MOCKS) return mock.getTemplates();
-    return apiRequest<ProgramTemplate[]>("/api/admin/templates", { signal });
+    return apiRequest<ProgramTemplate[]>("/api/templates.php", { signal });
   },
 
   getTemplatesByProgram(programId: string, signal?: AbortSignal): Promise<ProgramTemplate[]> {
     if (USE_MOCKS) return mock.getTemplatesByProgram(programId);
-    return apiRequest<ProgramTemplate[]>(`/api/admin/programs/${encodeURIComponent(programId)}/templates`, { signal });
+    return apiRequest<ProgramTemplate[]>(`/api/templates.php?programId=${encodeURIComponent(programId)}`, { signal });
   },
 
   createTemplate(payload: CreateTemplatePayload): Promise<ProgramTemplate> {
     if (USE_MOCKS) return mock.createTemplate(payload);
-    return apiRequest<ProgramTemplate>(`/api/admin/programs/${encodeURIComponent(payload.programId)}/templates`, { method: "POST", body: payload });
+    return apiRequest<ProgramTemplate>("/api/templates.php", { method: "POST", body: payload });
   },
 
   setDefaultTemplate(programId: string, templateId: string): Promise<ProgramTemplate[]> {
     if (USE_MOCKS) return mock.setDefaultTemplate(programId, templateId);
-    return apiRequest<ProgramTemplate[]>(`/api/admin/programs/${encodeURIComponent(programId)}/templates/${encodeURIComponent(templateId)}`, { method: "PATCH", body: { isDefault: true } });
+    return apiRequest<ProgramTemplate[]>(
+      `/api/templates.php?programId=${encodeURIComponent(programId)}&id=${encodeURIComponent(templateId)}`,
+      { method: "PATCH", body: { isDefault: true } },
+    );
   },
 };

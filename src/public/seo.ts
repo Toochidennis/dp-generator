@@ -1,4 +1,4 @@
-import { event, faqs, modules } from "@/public/data/event";
+import { EVENT_BASE_PATH, event, faqs, modules } from "@/public/data/event";
 import { absoluteUrl, type JsonLd } from "@/shared/utils/seo";
 
 const DEFAULT_IMAGE = "/images/digital-dreams-logo.png";
@@ -61,7 +61,7 @@ export function landingStructuredData(): JsonLd[] {
         educationalRole: "student",
         audienceType: event.ageLabel,
       },
-      url: absoluteUrl("/"),
+      url: absoluteUrl(EVENT_BASE_PATH),
       image: absoluteUrl(DEFAULT_IMAGE),
     },
     {
@@ -104,7 +104,7 @@ export function badgeStructuredData(): JsonLd {
     applicationCategory: "MultimediaApplication",
     operatingSystem: "Any",
     description: badgeSeo.description,
-    url: absoluteUrl("/badge"),
+    url: absoluteUrl(`${EVENT_BASE_PATH}/badge`),
     publisher: {
       "@type": "EducationalOrganization",
       name: event.brand,
