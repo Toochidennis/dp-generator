@@ -1,62 +1,73 @@
 <?php
-// All admin-only.
-// GET   (no params)          -> every template, flattened across programs
-// GET   ?programId=          -> templates for one program
-// GET   ?id=                 -> one template
-// POST                       -> create a template on a program
-// PATCH ?programId=&id=      -> update a template (e.g. {isDefault:true}); returns the program's templates[]
+// All admin-only. Templates are stored independently of programs (a
+// template's programId can be null), so uploading one never requires a
+// program to exist first.
+//
+// GET   (no params)   -> every template
+// GET   ?unassigned=1 -> templates with no program yet
+// GET   ?programId=   -> templates for one program
+// GET   ?id=          -> one template
+// POST                -> create a template; programId optional (omit/null = unassigned)
+// PATCH ?id=          -> {isDefault:true} marks default within its current program (returns that program's templates[])
+//                        {programId:"..."|null} assigns/reassigns/unassigns (returns the updated template)
+//                        {name, status} general field updates (returns the updated template)
 
 require_once __DIR__ . '/helpers.php';
 send_cors_headers();
 require_admin();
 
-function all_templates(array $programs): array {
-    $out = [];
-    foreach ($programs as $p) {
-        foreach (($p['templates'] ?? []) as $t) $out[] = $t;
+function find_template_index(array $templates, string $id): ?int {
+    foreach ($templates as $i => $t) {
+        if (($t['id'] ?? '') === $id) return $i;
     }
-    return $out;
+    return null;
+}
+
+function program_exists(string $id): bool {
+    foreach (read_programs() as $p) {
+        if (($p['id'] ?? '') === $id) return true;
+    }
+    return false;
 }
 
 $method = $_SERVER['REQUEST_METHOD'];
-$programs = read_programs();
+$templates = read_templates();
 
 if ($method === 'GET') {
     if (isset($_GET['id'])) {
-        foreach (all_templates($programs) as $t) {
-            if ($t['id'] === $_GET['id']) json_response($t);
-        }
-        json_response(['message' => 'Template not found.'], 404);
+        $idx = find_template_index($templates, (string) $_GET['id']);
+        if ($idx === null) json_response(['message' => 'Template not found.'], 404);
+        json_response($templates[$idx]);
+    }
+    if (isset($_GET['unassigned'])) {
+        json_response(array_values(array_filter($templates, fn($t) => empty($t['programId']))));
     }
     if (isset($_GET['programId'])) {
-        foreach ($programs as $p) {
-            if ($p['id'] === $_GET['programId']) json_response(array_values($p['templates'] ?? []));
-        }
-        json_response(['message' => 'Program not found.'], 404);
+        json_response(array_values(array_filter($templates, fn($t) => ($t['programId'] ?? null) === $_GET['programId'])));
     }
-    json_response(all_templates($programs));
+    json_response(array_values($templates));
 }
 
 if ($method === 'POST') {
     require_csrf();
     $body = json_body();
-    $programId = (string) ($body['programId'] ?? '');
     $name = clean_text($body['name'] ?? '');
-    if ($programId === '' || $name === '') {
-        json_response(['message' => 'programId and name are required.'], 422);
-    }
+    if ($name === '') json_response(['message' => 'Template name is required.'], 422);
 
-    $idx = null;
-    foreach ($programs as $i => $p) {
-        if ($p['id'] === $programId) { $idx = $i; break; }
+    $programId = !empty($body['programId']) ? (string) $body['programId'] : null;
+    if ($programId !== null && !program_exists($programId)) {
+        json_response(['message' => 'Program not found.'], 404);
     }
-    if ($idx === null) json_response(['message' => 'Program not found.'], 404);
 
     $type = in_array($body['type'] ?? '', ['image', 'pdf'], true) ? $body['type'] : 'image';
     $previewUrl = save_data_url_image($body['previewUrl'] ?? null, 'templates');
     if (!$previewUrl) $previewUrl = placeholder_preview($name);
 
-    $isFirst = empty($programs[$idx]['templates']);
+    $siblingCount = $programId
+        ? count(array_filter($templates, fn($t) => ($t['programId'] ?? null) === $programId))
+        : 0;
+    $isDefault = $programId ? (!empty($body['isDefault']) || $siblingCount === 0) : false;
+
     $template = [
         'id' => new_id('temp'),
         'programId' => $programId,
@@ -64,46 +75,68 @@ if ($method === 'POST') {
         'previewUrl' => $previewUrl,
         'type' => $type,
         'status' => in_array($body['status'] ?? '', ['active', 'draft', 'archived'], true) ? $body['status'] : 'active',
-        'isDefault' => !empty($body['isDefault']) || $isFirst,
+        'isDefault' => $isDefault,
     ];
 
-    if ($template['isDefault']) {
-        foreach ($programs[$idx]['templates'] as &$t) $t['isDefault'] = false;
+    if ($isDefault && $programId) {
+        foreach ($templates as &$t) {
+            if (($t['programId'] ?? null) === $programId) $t['isDefault'] = false;
+        }
         unset($t);
     }
-    $programs[$idx]['templates'][] = $template;
-    write_store(PROGRAMS_FILE, $programs);
+    $templates[] = $template;
+    write_store(TEMPLATES_FILE, $templates);
     json_response($template, 201);
 }
 
 if ($method === 'PATCH') {
     require_csrf();
-    $programId = (string) ($_GET['programId'] ?? '');
-    $templateId = (string) ($_GET['id'] ?? ($_GET['templateId'] ?? ''));
-    if ($templateId === '') json_response(['message' => 'Missing template id.'], 400);
+    $id = (string) ($_GET['id'] ?? '');
+    if ($id === '') json_response(['message' => 'Missing id.'], 400);
+
+    $idx = find_template_index($templates, $id);
+    if ($idx === null) json_response(['message' => 'Template not found.'], 404);
 
     $body = json_body();
-    $progIdx = null;
-    $tmplIdx = null;
-    foreach ($programs as $i => $p) {
-        if ($programId !== '' && $p['id'] !== $programId) continue;
-        foreach (($p['templates'] ?? []) as $j => $t) {
-            if ($t['id'] === $templateId) { $progIdx = $i; $tmplIdx = $j; break 2; }
+
+    // Assign / reassign / unassign.
+    if (array_key_exists('programId', $body)) {
+        $programId = !empty($body['programId']) ? (string) $body['programId'] : null;
+        if ($programId !== null && !program_exists($programId)) {
+            json_response(['message' => 'Program not found.'], 404);
         }
+        $templates[$idx]['programId'] = $programId;
+        if ($programId) {
+            $hasDefault = false;
+            foreach ($templates as $t) {
+                if ($t['id'] !== $id && ($t['programId'] ?? null) === $programId && !empty($t['isDefault'])) $hasDefault = true;
+            }
+            $templates[$idx]['isDefault'] = !$hasDefault;
+        } else {
+            $templates[$idx]['isDefault'] = false;
+        }
+        write_store(TEMPLATES_FILE, $templates);
+        json_response($templates[$idx]);
     }
-    if ($progIdx === null) json_response(['message' => 'Template not found.'], 404);
 
-    foreach (['name', 'status'] as $field) {
-        if (array_key_exists($field, $body)) $programs[$progIdx]['templates'][$tmplIdx][$field] = clean_text($body[$field]);
-    }
+    // Mark as the default within its current program.
     if (!empty($body['isDefault'])) {
-        foreach ($programs[$progIdx]['templates'] as &$t) $t['isDefault'] = false;
+        $programId = $templates[$idx]['programId'] ?? null;
+        if (!$programId) json_response(['message' => 'Attach this template to a program before making it the default.'], 422);
+        foreach ($templates as &$t) {
+            if (($t['programId'] ?? null) === $programId) $t['isDefault'] = ($t['id'] === $id);
+        }
         unset($t);
-        $programs[$progIdx]['templates'][$tmplIdx]['isDefault'] = true;
+        write_store(TEMPLATES_FILE, $templates);
+        json_response(array_values(array_filter($templates, fn($t) => ($t['programId'] ?? null) === $programId)));
     }
 
-    write_store(PROGRAMS_FILE, $programs);
-    json_response(array_values($programs[$progIdx]['templates']));
+    // General field updates.
+    foreach (['name', 'status'] as $field) {
+        if (array_key_exists($field, $body)) $templates[$idx][$field] = clean_text($body[$field]);
+    }
+    write_store(TEMPLATES_FILE, $templates);
+    json_response($templates[$idx]);
 }
 
 json_response(['message' => 'Method not allowed.'], 405);

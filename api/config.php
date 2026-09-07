@@ -4,6 +4,7 @@
 
 define('DATA_DIR', __DIR__ . '/../data');
 define('PROGRAMS_FILE', DATA_DIR . '/programs.json');
+define('TEMPLATES_FILE', DATA_DIR . '/templates.json');
 define('GENERATIONS_FILE', DATA_DIR . '/generations.json');
 define('ADMIN_FILE', DATA_DIR . '/admin.json');
 

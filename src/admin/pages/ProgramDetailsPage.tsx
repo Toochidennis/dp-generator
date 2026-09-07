@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, ExternalLink, FileStack, LayoutTemplate, Pencil, Plus, Star } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ExternalLink, FileStack, LayoutTemplate, Link2, Pencil, Plus, Star } from "lucide-react";
 import type { Program, ProgramTemplate } from "@/shared/types/domain";
 import { programService } from "@/shared/services/programService";
 import { generationService } from "@/shared/services/generationService";
@@ -14,6 +14,7 @@ import { CopyButton } from "@/shared/components/ui/CopyButton";
 import { EmptyState, ErrorState, LoadingState } from "@/shared/components/ui/states";
 import { ProgramFormModal } from "@/admin/components/ProgramFormModal";
 import { TemplateFormModal } from "@/admin/components/TemplateFormModal";
+import { AttachTemplateModal } from "@/admin/components/AttachTemplateModal";
 import { GenerationsTable } from "@/admin/components/GenerationsTable";
 
 const TABS = ["overview", "templates", "generations", "settings"] as const;
@@ -123,6 +124,7 @@ function OverviewTab({ data, generationsCount }: { data: Program; generationsCou
 
 function TemplatesTab({ program, onAdded, onDefault }: { program: Program; onAdded: (t: ProgramTemplate) => void; onDefault: (templates: ProgramTemplate[]) => void }) {
   const [adding, setAdding] = useState(false);
+  const [attaching, setAttaching] = useState(false);
 
   const makeDefault = async (templateId: string) => {
     const templates = await templateService.setDefaultTemplate(program.id, templateId);
@@ -133,11 +135,14 @@ function TemplatesTab({ program, onAdded, onDefault }: { program: Program; onAdd
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-slate-500">{program.templates.length} template{program.templates.length === 1 ? "" : "s"} attached</p>
-        <Button onClick={() => setAdding(true)}><Plus size={15} /> Upload template</Button>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={() => setAttaching(true)}><Link2 size={15} /> Attach existing</Button>
+          <Button onClick={() => setAdding(true)}><Plus size={15} /> Upload template</Button>
+        </div>
       </div>
 
       {program.templates.length === 0 ? (
-        <EmptyState icon={<LayoutTemplate size={22} />} title="No templates yet" description="Upload a template so participants can generate cards." action={<Button onClick={() => setAdding(true)}><Plus size={15} /> Upload template</Button>} />
+        <EmptyState icon={<LayoutTemplate size={22} />} title="No templates yet" description="Upload a new template, or attach one you've already uploaded elsewhere." action={<Button onClick={() => setAdding(true)}><Plus size={15} /> Upload template</Button>} />
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {program.templates.map((template) => (
@@ -164,6 +169,7 @@ function TemplatesTab({ program, onAdded, onDefault }: { program: Program; onAdd
       )}
 
       {adding && <TemplateFormModal open programId={program.id} onClose={() => setAdding(false)} onSaved={onAdded} />}
+      {attaching && <AttachTemplateModal open programId={program.id} onClose={() => setAttaching(false)} onAttached={onAdded} />}
     </div>
   );
 }

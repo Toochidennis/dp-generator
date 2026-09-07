@@ -4,6 +4,10 @@
 // GET   ?slug=           -> public, one program by slug (404 if missing/archived)
 // POST                   -> admin, create a program
 // PATCH ?id=             -> admin, update a program (incl. status/defaultTemplateId)
+//
+// `templates` on the returned program is joined in from templates.json (see
+// helpers.php:attach_templates) — templates are stored independently of
+// programs so a template can exist before any program does.
 
 require_once __DIR__ . '/helpers.php';
 send_cors_headers();
@@ -31,7 +35,7 @@ if ($method === 'GET') {
                 if (($p['status'] ?? '') === 'archived') {
                     json_response(['message' => 'This program link is no longer active.'], 404);
                 }
-                json_response(public_view($p));
+                json_response(public_view(attach_templates($p)));
             }
         }
         json_response(['message' => 'This program link could not be found.'], 404);
@@ -41,13 +45,13 @@ if ($method === 'GET') {
         require_admin();
         $idx = find_program_index($programs, (string) $_GET['id']);
         if ($idx === null) json_response(['message' => 'Program not found.'], 404);
-        json_response($programs[$idx]);
+        json_response(attach_templates($programs[$idx]));
     }
 
     if (is_admin()) {
-        json_response(array_values($programs));
+        json_response(attach_templates(array_values($programs)));
     }
-    json_response(array_values(array_filter($programs, fn($p) => ($p['status'] ?? '') === 'active')));
+    json_response(attach_templates(array_values(array_filter($programs, fn($p) => ($p['status'] ?? '') === 'active'))));
 }
 
 if ($method === 'POST') {
@@ -71,14 +75,13 @@ if ($method === 'POST') {
         'bannerUrl' => save_data_url_image($body['bannerUrl'] ?? null, 'banners'),
         'status' => in_array($body['status'] ?? '', ['active', 'draft', 'archived'], true) ? $body['status'] : 'draft',
         'attendanceText' => clean_text($body['attendanceText'] ?? '{{name}} is attending {{programName}}'),
-        'templates' => [],
         'generationCount' => 0,
         'createdAt' => now_iso(),
     ];
 
     $programs[] = $program;
     write_store(PROGRAMS_FILE, $programs);
-    json_response($program, 201);
+    json_response(attach_templates($program), 201);
 }
 
 if ($method === 'PATCH') {
@@ -107,16 +110,22 @@ if ($method === 'PATCH') {
     if (array_key_exists('bannerUrl', $body)) {
         $program['bannerUrl'] = save_data_url_image($body['bannerUrl'], 'banners');
     }
-    if (!empty($body['defaultTemplateId'])) {
-        foreach ($program['templates'] as &$t) {
-            $t['isDefault'] = ($t['id'] === $body['defaultTemplateId']);
-        }
-        unset($t);
-    }
 
     $programs[$idx] = $program;
     write_store(PROGRAMS_FILE, $programs);
-    json_response($program);
+
+    if (!empty($body['defaultTemplateId'])) {
+        $templates = read_templates();
+        foreach ($templates as &$t) {
+            if (($t['programId'] ?? null) === $program['id']) {
+                $t['isDefault'] = ($t['id'] === $body['defaultTemplateId']);
+            }
+        }
+        unset($t);
+        write_store(TEMPLATES_FILE, $templates);
+    }
+
+    json_response(attach_templates($program));
 }
 
 json_response(['message' => 'Method not allowed.'], 405);

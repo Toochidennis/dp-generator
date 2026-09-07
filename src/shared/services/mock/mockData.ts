@@ -1,7 +1,10 @@
 // Isolated mock dataset. This is the ONLY place that fabricates program,
 // template, and generation data. Nothing here leaks into UI components.
 
-import type { Generation, Program } from "@/shared/types/domain";
+import type { Generation, Program, ProgramTemplate } from "@/shared/types/domain";
+
+/** Program shape as seeded, before templates are joined in at read time. */
+export type ProgramSeed = Omit<Program, "templates">;
 
 const svg = (inner: string) =>
   `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
@@ -74,7 +77,7 @@ const sampleAttendanceCard = (name: string, programName: string, dateLabel: stri
 
 const now = () => new Date().toISOString();
 
-export const seedPrograms: Program[] = [
+export const seedPrograms: ProgramSeed[] = [
   {
     id: "prog_001",
     title: "Digital Dreams Tech Bootcamp 2026",
@@ -87,11 +90,6 @@ export const seedPrograms: Program[] = [
     attendanceText: "{{name}} is attending {{programName}}",
     generationCount: 128,
     createdAt: "2026-05-01T09:00:00Z",
-    templates: [
-      { id: "temp_001", programId: "prog_001", name: "Classic", previewUrl: templatePreview("CLASSIC", "#4267b2", "#159568"), type: "image", status: "active", isDefault: true },
-      { id: "temp_002", programId: "prog_001", name: "Minimal", previewUrl: templatePreview("MINIMAL", "#172b4d", "#159568"), type: "image", status: "active" },
-      { id: "temp_005", programId: "prog_001", name: "Digital Dreams Signature", previewUrl: sampleAttendanceCard("Your Name", "Tech Bootcamp 2026", "July 20 - 24, 2026"), type: "image", status: "active" },
-    ],
   },
   {
     id: "prog_002",
@@ -105,9 +103,6 @@ export const seedPrograms: Program[] = [
     attendanceText: "{{name}} will be attending {{programName}}",
     generationCount: 42,
     createdAt: "2026-05-18T11:30:00Z",
-    templates: [
-      { id: "temp_003", programId: "prog_002", name: "Summit Badge", previewUrl: templatePreview("REGISTERED", "#7c3aed", "#159568"), type: "image", status: "active", isDefault: true },
-    ],
   },
   {
     id: "prog_003",
@@ -121,7 +116,6 @@ export const seedPrograms: Program[] = [
     attendanceText: "{{name}} is joining {{programName}}",
     generationCount: 0,
     createdAt: "2026-06-02T08:15:00Z",
-    templates: [],
   },
   {
     id: "prog_004",
@@ -135,10 +129,16 @@ export const seedPrograms: Program[] = [
     attendanceText: "{{name}} attended {{programName}}",
     generationCount: 311,
     createdAt: "2025-10-01T08:15:00Z",
-    templates: [
-      { id: "temp_004", programId: "prog_004", name: "Reunion Frame", previewUrl: templatePreview("PROUD ALUMNI", "#475569", "#4267b2"), type: "image", status: "archived", isDefault: true },
-    ],
   },
+];
+
+export const seedTemplates: ProgramTemplate[] = [
+  { id: "temp_001", programId: "prog_001", name: "Classic", previewUrl: templatePreview("CLASSIC", "#4267b2", "#159568"), type: "image", status: "active", isDefault: true },
+  { id: "temp_002", programId: "prog_001", name: "Minimal", previewUrl: templatePreview("MINIMAL", "#172b4d", "#159568"), type: "image", status: "active" },
+  { id: "temp_005", programId: "prog_001", name: "Digital Dreams Signature", previewUrl: sampleAttendanceCard("Your Name", "Tech Bootcamp 2026", "July 20 - 24, 2026"), type: "image", status: "active" },
+  { id: "temp_003", programId: "prog_002", name: "Summit Badge", previewUrl: templatePreview("REGISTERED", "#7c3aed", "#159568"), type: "image", status: "active", isDefault: true },
+  { id: "temp_004", programId: "prog_004", name: "Reunion Frame", previewUrl: templatePreview("PROUD ALUMNI", "#475569", "#4267b2"), type: "image", status: "archived", isDefault: true },
+  { id: "temp_006", programId: null, name: "Generic Certificate Frame", previewUrl: templatePreview("ATTENDEE", "#0f766e", "#4267b2"), type: "image", status: "active" },
 ];
 
 export const seedGenerations: Generation[] = [

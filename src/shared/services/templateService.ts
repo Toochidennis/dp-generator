@@ -16,6 +16,12 @@ export const templateService = {
     return apiRequest<ProgramTemplate[]>(`/api/templates.php?programId=${encodeURIComponent(programId)}`, { signal });
   },
 
+  /** Templates uploaded but not yet attached to any program. */
+  async getUnassignedTemplates(signal?: AbortSignal): Promise<ProgramTemplate[]> {
+    if (USE_MOCKS) return mock.getUnassignedTemplates();
+    return apiRequest<ProgramTemplate[]>("/api/templates.php?unassigned=1", { signal });
+  },
+
   createTemplate(payload: CreateTemplatePayload): Promise<ProgramTemplate> {
     if (USE_MOCKS) return mock.createTemplate(payload);
     return apiRequest<ProgramTemplate>("/api/templates.php", { method: "POST", body: payload });
@@ -24,8 +30,17 @@ export const templateService = {
   setDefaultTemplate(programId: string, templateId: string): Promise<ProgramTemplate[]> {
     if (USE_MOCKS) return mock.setDefaultTemplate(programId, templateId);
     return apiRequest<ProgramTemplate[]>(
-      `/api/templates.php?programId=${encodeURIComponent(programId)}&id=${encodeURIComponent(templateId)}`,
+      `/api/templates.php?id=${encodeURIComponent(templateId)}`,
       { method: "PATCH", body: { isDefault: true } },
+    );
+  },
+
+  /** Attaches an existing (typically unassigned) template to a program. */
+  assignTemplate(templateId: string, programId: string): Promise<ProgramTemplate> {
+    if (USE_MOCKS) return mock.assignTemplate(templateId, programId);
+    return apiRequest<ProgramTemplate>(
+      `/api/templates.php?id=${encodeURIComponent(templateId)}`,
+      { method: "PATCH", body: { programId } },
     );
   },
 };

@@ -174,20 +174,44 @@ function seed_programs(): array {
         'bannerUrl' => null,
         'status' => 'active',
         'attendanceText' => '{{name}} is attending {{programName}}',
-        'templates' => [[
-            'id' => 'temp_kids_coding_bootcamp_2026',
-            'programId' => 'prog_kids_coding_bootcamp',
-            'name' => 'Kids Coding Bootcamp 2026',
-            'previewUrl' => '/uploads/templates/kids-coding-bootcamp-2026.png',
-            'type' => 'image',
-            'status' => 'active',
-            'isDefault' => true,
-        ]],
         'generationCount' => 0,
         'createdAt' => now_iso(),
     ]];
 }
 
+/** Seed data for templates.json. Templates are a flat store — programId is
+ * null until a template is attached to a program, so they don't need a
+ * program to exist first. */
+function seed_templates(): array {
+    return [[
+        'id' => 'temp_kids_coding_bootcamp_2026',
+        'programId' => 'prog_kids_coding_bootcamp',
+        'name' => 'Kids Coding Bootcamp 2026',
+        'previewUrl' => '/uploads/templates/kids-coding-bootcamp-2026.png',
+        'type' => 'image',
+        'status' => 'active',
+        'isDefault' => true,
+    ]];
+}
+
 function read_programs(): array {
     return read_store(PROGRAMS_FILE, 'seed_programs');
+}
+
+function read_templates(): array {
+    return read_store(TEMPLATES_FILE, 'seed_templates');
+}
+
+/** Joins templates onto a program (or every program in an array) as `templates`,
+ * matching the Program type's shape even though templates are stored separately. */
+function attach_templates(array $programOrPrograms, ?array $templates = null): array {
+    $templates = $templates ?? read_templates();
+    $isList = array_is_list($programOrPrograms);
+
+    $withTemplates = function (array $program) use ($templates): array {
+        $program['templates'] = array_values(array_filter($templates, fn($t) => ($t['programId'] ?? null) === $program['id']));
+        return $program;
+    };
+
+    return $isList ? array_map($withTemplates, $programOrPrograms) : $withTemplates($programOrPrograms);
 }
