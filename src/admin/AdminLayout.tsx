@@ -25,7 +25,7 @@ function NavItems({ onNavigate }: { onNavigate?: () => void }) {
           end={end}
           onClick={onNavigate}
           className={({ isActive }) =>
-            `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition ${isActive ? "bg-[#4267b2] text-white shadow-md shadow-blue-100" : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"}`
+            `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition ${isActive ? "bg-[#1b3a9e] text-white shadow-md shadow-blue-100" : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"}`
           }
         >
           <Icon size={18} />
@@ -86,7 +86,7 @@ export function AdminLayout() {
         </div>
         <div className="mt-auto space-y-2 p-4">
           <div className={`rounded-xl border p-3 text-[11px] font-semibold ${USE_MOCKS ? "border-amber-200 bg-amber-50 text-amber-700" : "border-emerald-200 bg-emerald-50 text-emerald-700"}`}>
-            {USE_MOCKS ? "Mock data mode — backend not connected" : "Connected to live API"}
+            {USE_MOCKS ? "Mock data mode. Backend not connected." : "Connected to live API"}
           </div>
           {!USE_MOCKS && (
             <button type="button" onClick={() => void signOut()} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800">

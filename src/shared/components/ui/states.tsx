@@ -8,7 +8,7 @@ export function Spinner({ className = "size-5" }: { className?: string }) {
 export function LoadingState({ label = "Loading…", className = "" }: { label?: string; className?: string }) {
   return (
     <div className={`grid place-items-center gap-3 py-16 text-center ${className}`} role="status">
-      <span className="grid size-12 place-items-center rounded-2xl border border-slate-200 bg-white text-[#4267b2] shadow-sm">
+      <span className="grid size-12 place-items-center rounded-2xl border border-slate-200 bg-white text-[#1b3a9e] shadow-sm">
         <Spinner className="size-6" />
       </span>
       <p className="text-sm font-semibold text-slate-500">{label}</p>
@@ -27,7 +27,7 @@ export function ErrorState({ message, onRetry }: { message?: string; onRetry?: (
         <p className="mt-1 text-xs text-rose-600">{message || "Please try again."}</p>
       </div>
       {onRetry && (
-        <button type="button" onClick={onRetry} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-600 hover:border-[#4267b2] hover:text-[#4267b2]">
+        <button type="button" onClick={onRetry} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-600 hover:border-[#1b3a9e] hover:text-[#1b3a9e]">
           <RefreshCw size={14} /> Retry
         </button>
       )}

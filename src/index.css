@@ -25,7 +25,7 @@ input[type="range"] { transition: opacity 160ms ease; }
 .page-switch { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: rgba(244, 248, 252, .78); backdrop-filter: blur(14px); animation: switch-fade 160ms ease-out; }
 .page-switch__card { display: flex; width: min(290px, calc(100vw - 40px)); flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,.9); border-radius: 22px; background: rgba(255,255,255,.9); padding: 24px; box-shadow: 0 28px 70px -30px rgba(30,64,175,.38); }
 .page-switch__track { width: 100%; height: 3px; margin-top: 20px; overflow: hidden; border-radius: 99px; background: #e2e8f0; }
-.page-switch__track span { display: block; width: 45%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #4267b2, #159568); animation: switch-progress 900ms ease-in-out infinite; }
+.page-switch__track span { display: block; width: 45%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #1b3a9e, #159568); animation: switch-progress 900ms ease-in-out infinite; }
 .page-switch__card p { margin: 12px 0 0; color: #64748b; font-size: 11px; font-weight: 700; }
 
 @keyframes switch-fade { from { opacity: 0; } to { opacity: 1; } }
@@ -51,10 +51,10 @@ input[type="range"] { transition: opacity 160ms ease; }
 @layer components {
   .glass-card { @apply rounded-[24px] border border-white/90 bg-white/65 shadow-[0_18px_50px_-30px_rgba(15,23,42,.35)] backdrop-blur-2xl; }
   .control-card { @apply rounded-[24px] border border-white/90 bg-white/70 p-5 shadow-[0_18px_50px_-30px_rgba(15,23,42,.35)] backdrop-blur-2xl transition-all duration-300 hover:border-white hover:bg-white/80 hover:shadow-[0_24px_60px_-32px_rgba(15,23,42,.42)]; }
-  .step-number { @apply grid size-8 shrink-0 place-items-center rounded-xl bg-blue-50 font-[Manrope] text-[10px] font-extrabold text-[#4267b2] ring-1 ring-blue-100; }
+  .step-number { @apply grid size-8 shrink-0 place-items-center rounded-xl bg-blue-50 font-[Manrope] text-[10px] font-extrabold text-[#1b3a9e] ring-1 ring-blue-100; }
   .field-label { @apply mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-500; }
-  .text-input { @apply w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-3 text-sm font-medium text-slate-900 outline-none transition placeholder:font-normal placeholder:text-slate-400 hover:border-slate-300 hover:bg-white focus:border-[#4267b2] focus:bg-white focus:ring-4 focus:ring-blue-100; }
-  .section-kicker { @apply text-xs font-extrabold uppercase tracking-[.14em] text-[#4267b2]; }
+  .text-input { @apply w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-3 text-sm font-medium text-slate-900 outline-none transition placeholder:font-normal placeholder:text-slate-400 hover:border-slate-300 hover:bg-white focus:border-[#1b3a9e] focus:bg-white focus:ring-4 focus:ring-blue-100; }
+  .section-kicker { @apply text-xs font-extrabold uppercase tracking-[.14em] text-[#1b3a9e]; }
   .section-title { @apply mt-3 font-[Manrope] text-3xl font-extrabold leading-tight text-[#071b33] sm:text-4xl; }
   .section-copy { @apply mt-4 text-sm leading-7 text-slate-600 sm:text-base; }
 }

@@ -62,7 +62,7 @@ export function TemplatesPage() {
               </div>
               <div className="p-3">
                 <p className="truncate text-sm font-bold text-slate-800">{template.name}</p>
-                <Link to={`/admin/programs/${template.programId}?tab=templates`} className="block truncate text-[11px] font-semibold text-[#4267b2] hover:underline">{programName(template.programId)}</Link>
+                <Link to={`/admin/programs/${template.programId}?tab=templates`} className="block truncate text-[11px] font-semibold text-[#1b3a9e] hover:underline">{programName(template.programId)}</Link>
                 <div className="mt-1.5 flex items-center gap-2 text-[10px] font-semibold uppercase text-slate-400">
                   <StatusBadge status={template.status} />
                   <span>{template.type}</span>

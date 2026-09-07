@@ -25,7 +25,7 @@ export function CopyButton({ value, label = "Copy", className = "" }: Props) {
     <button
       type="button"
       onClick={() => void copy()}
-      className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition ${copied ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-white text-slate-600 hover:border-[#4267b2] hover:text-[#4267b2]"} ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition ${copied ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-white text-slate-600 hover:border-[#1b3a9e] hover:text-[#1b3a9e]"} ${className}`}
     >
       {copied ? <Check size={14} /> : <Copy size={14} />}
       {copied ? "Copied" : label}

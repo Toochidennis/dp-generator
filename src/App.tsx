@@ -37,7 +37,7 @@ function NotFound() {
       <div>
         <p className="font-[Manrope] text-5xl font-extrabold text-slate-300">404</p>
         <p className="mt-2 text-sm font-bold text-slate-600">This page could not be found.</p>
-        <a href="/" className="mt-4 inline-block rounded-xl bg-[#4267b2] px-4 py-2.5 text-xs font-bold text-white">Back home</a>
+        <a href="/" className="mt-4 inline-block rounded-xl bg-[#1b3a9e] px-4 py-2.5 text-xs font-bold text-white">Back home</a>
       </div>
     </div>
   );

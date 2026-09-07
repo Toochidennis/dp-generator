@@ -36,7 +36,7 @@ export function ProgramDetailsPage() {
 
   return (
     <div className="space-y-6">
-      <Link to="/admin/programs" className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#4267b2]">
+      <Link to="/admin/programs" className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#1b3a9e]">
         <ArrowLeft size={14} /> All programs
       </Link>
 
@@ -46,7 +46,7 @@ export function ProgramDetailsPage() {
         actions={
           <>
             <StatusBadge status={data.status} />
-            <a href={publicProgramUrl(data.slug)} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-600 hover:border-[#4267b2] hover:text-[#4267b2]">
+            <a href={publicProgramUrl(data.slug)} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-600 hover:border-[#1b3a9e] hover:text-[#1b3a9e]">
               <ExternalLink size={14} /> Open link
             </a>
           </>
@@ -60,7 +60,7 @@ export function ProgramDetailsPage() {
             key={value}
             type="button"
             onClick={() => setTab(value)}
-            className={`-mb-px shrink-0 border-b-2 px-4 py-2.5 text-sm font-bold capitalize transition ${tab === value ? "border-[#4267b2] text-[#4267b2]" : "border-transparent text-slate-400 hover:text-slate-600"}`}
+            className={`-mb-px shrink-0 border-b-2 px-4 py-2.5 text-sm font-bold capitalize transition ${tab === value ? "border-[#1b3a9e] text-[#1b3a9e]" : "border-transparent text-slate-400 hover:text-slate-600"}`}
           >
             {value}
           </button>
@@ -113,7 +113,7 @@ function OverviewTab({ data, generationsCount }: { data: Program; generationsCou
           <p className="mt-2 break-all rounded-xl bg-slate-50 p-3 font-mono text-[11px] text-slate-500">{publicProgramUrl(data.slug)}</p>
           <div className="mt-3 flex gap-2">
             <CopyButton value={publicProgramUrl(data.slug)} label="Copy link" />
-            <a href={publicProgramUrl(data.slug)} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-600 hover:border-[#4267b2] hover:text-[#4267b2]"><ExternalLink size={14} /> Open</a>
+            <a href={publicProgramUrl(data.slug)} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-600 hover:border-[#1b3a9e] hover:text-[#1b3a9e]"><ExternalLink size={14} /> Open</a>
           </div>
         </section>
       </div>

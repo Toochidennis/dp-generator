@@ -82,7 +82,7 @@ export function TemplateFormModal({ open, onClose, programId, programs, onSaved 
         <Field label="Type">
           <div className="flex gap-2">
             {(["image", "pdf"] as TemplateType[]).map((value) => (
-              <button key={value} type="button" onClick={() => setType(value)} className={`flex-1 rounded-xl border px-3 py-2.5 text-xs font-bold uppercase transition ${type === value ? "border-[#4267b2] bg-blue-50 text-[#4267b2]" : "border-slate-200 bg-white text-slate-500"}`}>
+              <button key={value} type="button" onClick={() => setType(value)} className={`flex-1 rounded-xl border px-3 py-2.5 text-xs font-bold uppercase transition ${type === value ? "border-[#1b3a9e] bg-blue-50 text-[#1b3a9e]" : "border-slate-200 bg-white text-slate-500"}`}>
                 {value}
               </button>
             ))}
@@ -90,12 +90,12 @@ export function TemplateFormModal({ open, onClose, programId, programs, onSaved 
         </Field>
         <p className="rounded-xl bg-slate-50 px-3 py-2 text-[11px] font-medium text-slate-500">Every attendance card includes the participant's photo.</p>
 
-        <Field label="Preview image" hint="optional — a placeholder is used if empty">
+        <Field label="Preview image" hint="optional, a placeholder is used if empty">
           <div className="flex items-center gap-3">
             <div className="size-20 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
               {previewUrl ? <img src={previewUrl} alt="Preview" className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center text-slate-300"><ImagePlus size={18} /></div>}
             </div>
-            <label className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 hover:border-[#4267b2] hover:text-[#4267b2]">
+            <label className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 hover:border-[#1b3a9e] hover:text-[#1b3a9e]">
               {previewUrl ? "Replace image" : "Upload image"}
               <input type="file" accept="image/*" className="sr-only" onChange={(e) => void onPreview(e.target.files?.[0])} />
             </label>

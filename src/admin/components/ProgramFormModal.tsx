@@ -102,7 +102,7 @@ export function ProgramFormModal({ open, onClose, program, onSaved }: Props) {
                 key={status}
                 type="button"
                 onClick={() => set("status", status)}
-                className={`flex-1 rounded-xl border px-3 py-2.5 text-xs font-bold capitalize transition ${form.status === status ? "border-[#4267b2] bg-blue-50 text-[#4267b2]" : "border-slate-200 bg-white text-slate-500 hover:border-slate-300"}`}
+                className={`flex-1 rounded-xl border px-3 py-2.5 text-xs font-bold capitalize transition ${form.status === status ? "border-[#1b3a9e] bg-blue-50 text-[#1b3a9e]" : "border-slate-200 bg-white text-slate-500 hover:border-slate-300"}`}
               >
                 {status}
               </button>
@@ -119,7 +119,7 @@ export function ProgramFormModal({ open, onClose, program, onSaved }: Props) {
             <div className="h-16 w-28 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
               {form.bannerUrl ? <img src={form.bannerUrl} alt="Banner" className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center text-slate-300"><ImagePlus size={18} /></div>}
             </div>
-            <label className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 hover:border-[#4267b2] hover:text-[#4267b2]">
+            <label className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 hover:border-[#1b3a9e] hover:text-[#1b3a9e]">
               {form.bannerUrl ? "Replace banner" : "Upload banner"}
               <input type="file" accept="image/*" className="sr-only" onChange={(e) => void onBanner(e.target.files?.[0])} />
             </label>

@@ -12,7 +12,7 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
   );
 }
 
-export function StatCard({ icon, label, value, accent = "text-[#4267b2]" }: { icon: ReactNode; label: string; value: ReactNode; accent?: string }) {
+export function StatCard({ icon, label, value, accent = "text-[#1b3a9e]" }: { icon: ReactNode; label: string; value: ReactNode; accent?: string }) {
   return (
     <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between">
@@ -47,7 +47,7 @@ type ButtonProps = {
 };
 
 const variants: Record<string, string> = {
-  primary: "bg-[#4267b2] text-white shadow-md shadow-blue-100 hover:bg-[#34589f]",
+  primary: "bg-[#1b3a9e] text-white shadow-md shadow-blue-100 hover:bg-[#16307f]",
   secondary: "border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50",
   ghost: "text-slate-600 hover:bg-slate-100",
   danger: "border border-rose-200 bg-white text-rose-600 hover:bg-rose-50",
