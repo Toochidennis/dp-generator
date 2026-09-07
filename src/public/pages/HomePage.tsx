@@ -36,7 +36,7 @@ function PortalNav() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-lg">
       <div className={`flex h-16 items-center justify-between gap-4 ${CONTAINER}`}>
-        <Link to="/" className="inline-flex items-center gap-2.5" aria-label="Digital Dreams × LinkSkool — home">
+        <Link to="/" className="inline-flex items-center gap-2.5" aria-label="Digital Dreams × LinkSkool home">
           {/* digital-dreams-logo.png's wordmark is white — it needs a dark chip behind it, or it reads as invisible on this white bar */}
           <span className="inline-flex items-center rounded-lg bg-[#0e1428] px-2.5 py-1.5">
             <img src="/images/digital-dreams-logo.png" alt="Digital Dreams" className="h-5 w-auto object-contain" />
@@ -182,7 +182,7 @@ function EventsSection() {
         ) : status === "error" ? (
           <ErrorState message={error} onRetry={reload} />
         ) : events.length === 0 ? (
-          <EmptyState icon={<CalendarRange size={22} />} title="No events yet" description="Check back soon — new programs are added regularly." />
+          <EmptyState icon={<CalendarRange size={22} />} title="No events yet" description="Check back soon. We add new programs all the time." />
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {events.map((program) => (
@@ -216,9 +216,9 @@ function About() {
           </div>
           <h2 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Digital Dreams &times; LinkSkool</h2>
           <p className="mt-4 max-w-lg text-sm leading-7 text-slate-500">
-            Digital Dreams is a top-10 Nigerian ICT firm that&apos;s trained developers since 2007. This portal, built with
-            LinkSkool, brings every program we run — bootcamps, workshops and community events — under one roof, each with
-            its own page and its own downloadable attendance card.
+            Digital Dreams is a top-10 Nigerian ICT firm that&apos;s been training developers since 2007. Together with
+            LinkSkool, we&apos;ve gathered every program we run (bootcamps, workshops, community events) under one roof,
+            each with its own page and its own downloadable attendance card.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -242,7 +242,7 @@ function PortalFooter() {
           <div>
             <img src="/images/digital-dreams-logo.png" alt="Digital Dreams" className="h-7 w-auto object-contain" />
             <p className="mt-5 max-w-sm text-sm leading-7 text-slate-400">
-              Digital Dreams — a top-10 Nigerian ICT firm training developers since 2007.
+              Digital Dreams is a top-10 Nigerian ICT firm that&apos;s been training developers since 2007.
             </p>
             <p className="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#4f76d8]">Let&apos;s make your dream a reality.</p>
           </div>
@@ -289,7 +289,7 @@ export function HomePage() {
     <div className="min-h-screen bg-white font-sans">
       <Seo
         title="Digital Dreams Events"
-        description="Every Digital Dreams program in one place — browse events, see what each one offers, and get your attendance card."
+        description="Every Digital Dreams program in one place. Browse events, see what each one offers, and grab your attendance card."
         path="/"
         siteName="Digital Dreams Events"
         jsonLd={{
