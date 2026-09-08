@@ -88,7 +88,7 @@ export const seedPrograms: ProgramSeed[] = [
     slug: "kids-coding-bootcamp",
     description: "A hands-on coding bootcamp, onsite and online, where curious kids go from playing games to building them, guided by Digital Dreams coaches who've trained Nigeria's developers since 2007.",
     startDate: "2026-07-01",
-    bannerUrl: "/images/kids-coding-bootcamp-card.png",
+    bannerUrl: "/images/kids-coding-bootcamp-banner.jpg",
     status: "active",
     attendanceText: "{{name}} is attending {{programName}}",
     generationCount: 0,

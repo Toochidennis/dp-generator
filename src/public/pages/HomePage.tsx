@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight, CalendarRange, GraduationCap, Instagram, MapPin, Menu, Phone, X } from "lucide-react";
 import type { Program } from "@/shared/types/domain";
@@ -23,6 +23,58 @@ const CONTAINER = "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8";
  *  directly instead of the generic /events/:slug page. */
 function eventHref(program: Program): string {
   return program.slug === "kids-coding-bootcamp" ? EVENT_BASE_PATH : `/events/${program.slug}`;
+}
+
+const HERO_SLIDES = [
+  { src: "/images/kids-coding-bootcamp-banner.jpg", alt: "Kids Coding Bootcamp — Digital Dreams' coding program for kids" },
+  { src: "/images/event-computer-lab.jpg", alt: "Participants at a Digital Dreams computer lab session" },
+  { src: "/images/event-training-session.jpg", alt: "Participants working at laptops during a Digital Dreams session" },
+];
+
+function HeroCarousel() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setIndex((i) => (i + 1) % HERO_SLIDES.length), 4500);
+    return () => window.clearInterval(id);
+  }, []);
+
+  return (
+    <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
+      <div className="relative aspect-[16/9] overflow-hidden rounded-[20px] border border-slate-200/80 bg-white shadow-[0_30px_70px_-30px_rgba(15,23,42,0.35)]">
+        {HERO_SLIDES.map((slide, i) => (
+          <img
+            key={slide.src}
+            src={slide.src}
+            alt={slide.alt}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${i === index ? "opacity-100" : "opacity-0"}`}
+          />
+        ))}
+      </div>
+
+      <div className="absolute inset-x-0 bottom-3 flex items-center justify-center gap-1.5">
+        {HERO_SLIDES.map((slide, i) => (
+          <button
+            key={slide.src}
+            type="button"
+            onClick={() => setIndex(i)}
+            aria-label={`Show slide ${i + 1}`}
+            className={`h-1.5 rounded-full transition-all ${i === index ? "w-5 bg-white" : "w-1.5 bg-white/60 hover:bg-white/80"}`}
+          />
+        ))}
+      </div>
+
+      <div className="absolute -bottom-5 -left-5 hidden items-center gap-3 rounded-2xl border border-slate-200/80 bg-white px-4 py-3 shadow-[0_18px_40px_-18px_rgba(15,23,42,0.3)] sm:flex">
+        <span className="grid size-9 place-items-center rounded-full bg-blue-50 text-[#1b3a9e]">
+          <GraduationCap size={18} />
+        </span>
+        <div>
+          <p className="text-sm font-semibold leading-none text-slate-900">17+ years</p>
+          <p className="mt-1 text-[11px] font-medium text-slate-500">training developers</p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 const NAV_LINKS = [
@@ -131,24 +183,7 @@ function Hero() {
           </div>
         </div>
 
-        <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
-          <div className="overflow-hidden rounded-[20px] border border-slate-200/80 bg-white p-2 shadow-[0_30px_70px_-30px_rgba(15,23,42,0.35)]">
-            <img
-              src="/images/event-training-session.jpg"
-              alt="Participants working at laptops during a Digital Dreams session"
-              className="aspect-[4/3] w-full rounded-2xl object-cover"
-            />
-          </div>
-          <div className="absolute -bottom-5 -left-5 hidden items-center gap-3 rounded-2xl border border-slate-200/80 bg-white px-4 py-3 shadow-[0_18px_40px_-18px_rgba(15,23,42,0.3)] sm:flex">
-            <span className="grid size-9 place-items-center rounded-full bg-blue-50 text-[#1b3a9e]">
-              <GraduationCap size={18} />
-            </span>
-            <div>
-              <p className="text-sm font-semibold leading-none text-slate-900">17+ years</p>
-              <p className="mt-1 text-[11px] font-medium text-slate-500">training developers</p>
-            </div>
-          </div>
-        </div>
+        <HeroCarousel />
       </div>
     </section>
   );
@@ -245,8 +280,8 @@ function About() {
         <div>
           <div className="overflow-hidden rounded-[20px] border border-slate-200/80 shadow-[0_20px_50px_-24px_rgba(15,23,42,0.3)]">
             <img
-              src="/images/event-computer-lab.jpg"
-              alt="Participants at a Digital Dreams computer lab session"
+              src="/images/event-code-closeup.jpg"
+              alt="A laptop screen showing code during a Digital Dreams session"
               className="aspect-[16/10] w-full object-cover"
             />
           </div>
