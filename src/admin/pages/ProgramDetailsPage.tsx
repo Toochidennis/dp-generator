@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, ExternalLink, FileStack, LayoutTemplate, Pencil, Plus, Star } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ExternalLink, FileStack, LayoutTemplate, Link2, Pencil, Plus, Star } from "lucide-react";
 import type { Program, ProgramTemplate } from "@/shared/types/domain";
 import { programService } from "@/shared/services/programService";
 import { generationService } from "@/shared/services/generationService";
@@ -14,6 +14,7 @@ import { CopyButton } from "@/shared/components/ui/CopyButton";
 import { EmptyState, ErrorState, LoadingState } from "@/shared/components/ui/states";
 import { ProgramFormModal } from "@/admin/components/ProgramFormModal";
 import { TemplateFormModal } from "@/admin/components/TemplateFormModal";
+import { AttachTemplateModal } from "@/admin/components/AttachTemplateModal";
 import { GenerationsTable } from "@/admin/components/GenerationsTable";
 
 const TABS = ["overview", "templates", "generations", "settings"] as const;
@@ -36,7 +37,7 @@ export function ProgramDetailsPage() {
 
   return (
     <div className="space-y-6">
-      <Link to="/admin/programs" className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#4267b2]">
+      <Link to="/admin/programs" className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#1b3a9e]">
         <ArrowLeft size={14} /> All programs
       </Link>
 
@@ -46,7 +47,7 @@ export function ProgramDetailsPage() {
         actions={
           <>
             <StatusBadge status={data.status} />
-            <a href={publicProgramUrl(data.slug)} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-600 hover:border-[#4267b2] hover:text-[#4267b2]">
+            <a href={publicProgramUrl(data.slug)} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-600 hover:border-[#1b3a9e] hover:text-[#1b3a9e]">
               <ExternalLink size={14} /> Open link
             </a>
           </>
@@ -60,7 +61,7 @@ export function ProgramDetailsPage() {
             key={value}
             type="button"
             onClick={() => setTab(value)}
-            className={`-mb-px shrink-0 border-b-2 px-4 py-2.5 text-sm font-bold capitalize transition ${tab === value ? "border-[#4267b2] text-[#4267b2]" : "border-transparent text-slate-400 hover:text-slate-600"}`}
+            className={`-mb-px shrink-0 border-b-2 px-4 py-2.5 text-sm font-bold capitalize transition ${tab === value ? "border-[#1b3a9e] text-[#1b3a9e]" : "border-transparent text-slate-400 hover:text-slate-600"}`}
           >
             {value}
           </button>
@@ -113,7 +114,7 @@ function OverviewTab({ data, generationsCount }: { data: Program; generationsCou
           <p className="mt-2 break-all rounded-xl bg-slate-50 p-3 font-mono text-[11px] text-slate-500">{publicProgramUrl(data.slug)}</p>
           <div className="mt-3 flex gap-2">
             <CopyButton value={publicProgramUrl(data.slug)} label="Copy link" />
-            <a href={publicProgramUrl(data.slug)} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-600 hover:border-[#4267b2] hover:text-[#4267b2]"><ExternalLink size={14} /> Open</a>
+            <a href={publicProgramUrl(data.slug)} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-600 hover:border-[#1b3a9e] hover:text-[#1b3a9e]"><ExternalLink size={14} /> Open</a>
           </div>
         </section>
       </div>
@@ -123,6 +124,7 @@ function OverviewTab({ data, generationsCount }: { data: Program; generationsCou
 
 function TemplatesTab({ program, onAdded, onDefault }: { program: Program; onAdded: (t: ProgramTemplate) => void; onDefault: (templates: ProgramTemplate[]) => void }) {
   const [adding, setAdding] = useState(false);
+  const [attaching, setAttaching] = useState(false);
 
   const makeDefault = async (templateId: string) => {
     const templates = await templateService.setDefaultTemplate(program.id, templateId);
@@ -133,11 +135,14 @@ function TemplatesTab({ program, onAdded, onDefault }: { program: Program; onAdd
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-slate-500">{program.templates.length} template{program.templates.length === 1 ? "" : "s"} attached</p>
-        <Button onClick={() => setAdding(true)}><Plus size={15} /> Upload template</Button>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={() => setAttaching(true)}><Link2 size={15} /> Attach existing</Button>
+          <Button onClick={() => setAdding(true)}><Plus size={15} /> Upload template</Button>
+        </div>
       </div>
 
       {program.templates.length === 0 ? (
-        <EmptyState icon={<LayoutTemplate size={22} />} title="No templates yet" description="Upload a template so participants can generate cards." action={<Button onClick={() => setAdding(true)}><Plus size={15} /> Upload template</Button>} />
+        <EmptyState icon={<LayoutTemplate size={22} />} title="No templates yet" description="Upload a new template, or attach one you've already uploaded elsewhere." action={<Button onClick={() => setAdding(true)}><Plus size={15} /> Upload template</Button>} />
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {program.templates.map((template) => (
@@ -164,6 +169,7 @@ function TemplatesTab({ program, onAdded, onDefault }: { program: Program; onAdd
       )}
 
       {adding && <TemplateFormModal open programId={program.id} onClose={() => setAdding(false)} onSaved={onAdded} />}
+      {attaching && <AttachTemplateModal open programId={program.id} onClose={() => setAttaching(false)} onAttached={onAdded} />}
     </div>
   );
 }

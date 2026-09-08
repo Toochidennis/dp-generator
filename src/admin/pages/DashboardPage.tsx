@@ -34,7 +34,7 @@ export function DashboardPage() {
         <section className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-5">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-sm font-extrabold text-slate-900">Recent programs</h2>
-            <Link to="/admin/programs" className="inline-flex items-center gap-1 text-xs font-bold text-[#4267b2] hover:underline">
+            <Link to="/admin/programs" className="inline-flex items-center gap-1 text-xs font-bold text-[#1b3a9e] hover:underline">
               View all <ArrowRight size={13} />
             </Link>
           </div>
@@ -51,7 +51,9 @@ export function DashboardPage() {
                   <Link to={`/admin/programs/${program.id}`} className="flex items-center gap-3 py-3 transition hover:opacity-80">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-bold text-slate-800">{program.title}</p>
-                      <p className="text-xs text-slate-400">{program.templates.length} templates · {program.generationCount ?? 0} generations</p>
+                      <p className="text-xs text-slate-400">
+                        {program.templates.length} template{program.templates.length === 1 ? "" : "s"} · {program.generationCount ?? 0} generation{(program.generationCount ?? 0) === 1 ? "" : "s"}
+                      </p>
                     </div>
                     <StatusBadge status={program.status} />
                   </Link>
@@ -65,7 +67,7 @@ export function DashboardPage() {
         <section className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-5">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-sm font-extrabold text-slate-900">Recent generations</h2>
-            <Link to="/admin/generations" className="inline-flex items-center gap-1 text-xs font-bold text-[#4267b2] hover:underline">
+            <Link to="/admin/generations" className="inline-flex items-center gap-1 text-xs font-bold text-[#1b3a9e] hover:underline">
               View all <ArrowRight size={13} />
             </Link>
           </div>
@@ -79,7 +81,7 @@ export function DashboardPage() {
             <ul className="divide-y divide-slate-100">
               {gens.slice(0, 5).map((gen) => (
                 <li key={gen.id} className="flex items-center gap-3 py-3">
-                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-blue-50 text-xs font-extrabold text-[#4267b2]">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-blue-50 text-xs font-extrabold text-[#1b3a9e]">
                     {gen.participantName.slice(0, 1).toUpperCase()}
                   </span>
                   <div className="min-w-0 flex-1">

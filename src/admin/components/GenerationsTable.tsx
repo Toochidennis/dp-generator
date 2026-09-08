@@ -15,7 +15,7 @@ export function GenerationsTable({ generations, showProgram = true }: Props) {
     <>
       <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[680px] text-left text-sm">
+          <table className="w-full min-w-[680px] whitespace-nowrap text-left text-sm">
             <thead>
               <tr className="border-b border-slate-100 text-[10px] font-extrabold uppercase tracking-wide text-slate-400">
                 <th className="px-4 py-3">Participant</th>
@@ -30,7 +30,7 @@ export function GenerationsTable({ generations, showProgram = true }: Props) {
                 <tr key={gen.id} className="hover:bg-slate-50/60">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="grid size-8 shrink-0 place-items-center rounded-full bg-blue-50 text-[11px] font-extrabold text-[#4267b2]">{gen.participantName.slice(0, 1).toUpperCase()}</span>
+                      <span className="grid size-8 shrink-0 place-items-center rounded-full bg-blue-50 text-[11px] font-extrabold text-[#1b3a9e]">{gen.participantName.slice(0, 1).toUpperCase()}</span>
                       <span className="font-bold text-slate-800">{gen.participantName}</span>
                     </div>
                   </td>
@@ -39,9 +39,9 @@ export function GenerationsTable({ generations, showProgram = true }: Props) {
                   <td className="px-4 py-3 text-xs text-slate-500">{formatDateTime(gen.generatedAt)}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
-                      <a aria-disabled={!available(gen.pdfUrl)} href={available(gen.pdfUrl) ? gen.pdfUrl : undefined} target="_blank" rel="noreferrer" title="Download PDF" className={`grid size-8 place-items-center rounded-lg ${available(gen.pdfUrl) ? "text-slate-400 hover:bg-slate-100 hover:text-[#4267b2]" : "cursor-not-allowed text-slate-200"}`}><Download size={15} /></a>
-                      <a aria-disabled={!available(gen.imageUrl)} href={available(gen.imageUrl) ? gen.imageUrl : undefined} target="_blank" rel="noreferrer" title="Download image" className={`grid size-8 place-items-center rounded-lg ${available(gen.imageUrl) ? "text-slate-400 hover:bg-slate-100 hover:text-[#4267b2]" : "cursor-not-allowed text-slate-200"}`}><FileImage size={15} /></a>
-                      <button type="button" title="View details" onClick={() => setDetails(gen)} className="grid size-8 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-[#4267b2]"><Eye size={15} /></button>
+                      <a aria-disabled={!available(gen.pdfUrl)} href={available(gen.pdfUrl) ? gen.pdfUrl : undefined} target="_blank" rel="noreferrer" title="Download PDF" className={`grid size-8 place-items-center rounded-lg ${available(gen.pdfUrl) ? "text-slate-400 hover:bg-slate-100 hover:text-[#1b3a9e]" : "cursor-not-allowed text-slate-200"}`}><Download size={15} /></a>
+                      <a aria-disabled={!available(gen.imageUrl)} href={available(gen.imageUrl) ? gen.imageUrl : undefined} target="_blank" rel="noreferrer" title="Download image" className={`grid size-8 place-items-center rounded-lg ${available(gen.imageUrl) ? "text-slate-400 hover:bg-slate-100 hover:text-[#1b3a9e]" : "cursor-not-allowed text-slate-200"}`}><FileImage size={15} /></a>
+                      <button type="button" title="View details" onClick={() => setDetails(gen)} className="grid size-8 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-[#1b3a9e]"><Eye size={15} /></button>
                     </div>
                   </td>
                 </tr>

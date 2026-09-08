@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Check, Home } from "lucide-react";
+import { EVENT_BASE_PATH } from "@/public/data/event";
 import { SiteNav } from "@/public/components/SiteNav";
 import { SiteFooter } from "@/public/components/SiteFooter";
 import { BadgeInputStep } from "@/public/components/badge/BadgeInputStep";
@@ -13,14 +14,14 @@ export function BadgePage() {
 
   return (
     <div className="kc min-h-screen">
-      <Seo {...bootcampSeoDefaults} {...badgeSeo} path="/badge" jsonLd={badgeStructuredData()} />
+      <Seo {...bootcampSeoDefaults} {...badgeSeo} path={`${EVENT_BASE_PATH}/badge`} jsonLd={badgeStructuredData()} />
       <SiteNav variant="sub" />
 
       <main className="kc-paper-dots">
         <div className="mx-auto max-w-2xl px-5 py-12 lg:py-16">
           {/* Pages are independent — offer a clear way home, in the page itself. */}
           <Link
-            to="/"
+            to={EVENT_BASE_PATH}
             className="mb-8 inline-flex items-center gap-1.5 rounded-xl border-2 border-ink/15 bg-white px-3 py-2 text-sm font-semibold text-ink/70 transition-colors hover:border-ink/30 hover:text-ink"
           >
             <Home size={16} /> Home

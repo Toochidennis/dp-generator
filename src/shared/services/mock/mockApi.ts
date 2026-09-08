@@ -21,10 +21,13 @@ import type {
   UpdateProgramPayload,
 } from "@/shared/types/domain";
 import { interpolateAttendanceText } from "@/shared/types/domain";
-import { seedGenerations, seedPrograms, mockHelpers } from "@/shared/services/mock/mockData";
+import { seedGenerations, seedPrograms, seedTemplates, mockHelpers, type ProgramSeed } from "@/shared/services/mock/mockData";
 
-// Cloned so mutations don't touch the seed module.
-let programs: Program[] = structuredClone(seedPrograms);
+// Cloned so mutations don't touch the seed module. Templates live in their
+// own flat store (a template may not belong to any program yet) and are
+// joined onto a program only when a Program object is actually returned.
+let programsBase: ProgramSeed[] = structuredClone(seedPrograms);
+let templates: ProgramTemplate[] = structuredClone(seedTemplates);
 let generations: Generation[] = structuredClone(seedGenerations);
 
 const delay = <T>(value: T, ms = 450): Promise<T> =>
@@ -33,27 +36,31 @@ const delay = <T>(value: T, ms = 450): Promise<T> =>
 const clone = <T>(value: T): T => structuredClone(value);
 const uid = (prefix: string) => `${prefix}_${Math.random().toString(36).slice(2, 8)}`;
 
-function requireProgram(id: string): Program {
-  const program = programs.find((item) => item.id === id);
+function requireProgramBase(id: string): ProgramSeed {
+  const program = programsBase.find((item) => item.id === id);
   if (!program) throw new Error("Program not found.");
   return program;
 }
 
+function withTemplates(program: ProgramSeed): Program {
+  return { ...program, templates: templates.filter((t) => t.programId === program.id) };
+}
+
 // ---- Programs ----
 
-export const getPrograms = () => delay(clone(programs));
+export const getPrograms = () => delay(clone(programsBase.map(withTemplates)));
 
-export const getProgramById = (id: string) => delay(clone(requireProgram(id)));
+export const getProgramById = (id: string) => delay(clone(withTemplates(requireProgramBase(id))));
 
 export const getProgramBySlug = (slug: string) => {
-  const program = programs.find((item) => item.slug === slug);
+  const program = programsBase.find((item) => item.slug === slug);
   if (!program) return Promise.reject(new Error("This program link could not be found."));
   if (program.status === "archived") return Promise.reject(new Error("This program link is no longer active."));
-  return delay(clone(program));
+  return delay(clone(withTemplates(program)));
 };
 
 export const createProgram = (payload: CreateProgramPayload) => {
-  const program: Program = {
+  const program: ProgramSeed = {
     id: uid("prog"),
     title: payload.title,
     slug: payload.slug,
@@ -63,54 +70,71 @@ export const createProgram = (payload: CreateProgramPayload) => {
     bannerUrl: payload.bannerUrl,
     status: payload.status,
     attendanceText: payload.attendanceText,
-    templates: [],
     generationCount: 0,
     createdAt: mockHelpers.now(),
   };
-  programs = [program, ...programs];
-  return delay(clone(program));
+  programsBase = [program, ...programsBase];
+  return delay(clone(withTemplates(program)));
 };
 
 export const updateProgram = (id: string, payload: UpdateProgramPayload) => {
-  const program = requireProgram(id);
+  const program = requireProgramBase(id);
   Object.assign(program, payload);
-  return delay(clone(program));
+  return delay(clone(withTemplates(program)));
 };
 
 export const archiveProgram = (id: string) => {
-  const program = requireProgram(id);
+  const program = requireProgramBase(id);
   program.status = "archived";
-  return delay(clone(program));
+  return delay(clone(withTemplates(program)));
 };
 
 // ---- Templates ----
+// A template may exist with no programId (not yet assigned to any program).
 
-export const getTemplates = () =>
-  delay(clone(programs.flatMap((program) => program.templates)));
+export const getTemplates = () => delay(clone(templates));
 
-export const getTemplatesByProgram = (programId: string) =>
-  delay(clone(requireProgram(programId).templates));
+export const getUnassignedTemplates = () => delay(clone(templates.filter((t) => !t.programId)));
+
+export const getTemplatesByProgram = (programId: string) => {
+  requireProgramBase(programId);
+  return delay(clone(templates.filter((t) => t.programId === programId)));
+};
 
 export const createTemplate = (payload: CreateTemplatePayload) => {
-  const program = requireProgram(payload.programId);
+  const programId = payload.programId || null;
+  if (programId) requireProgramBase(programId);
+  const siblingCount = programId ? templates.filter((t) => t.programId === programId).length : 0;
+  const isDefault = programId ? (payload.isDefault ?? siblingCount === 0) : false;
+
   const template: ProgramTemplate = {
     id: uid("temp"),
-    programId: payload.programId,
+    programId,
     name: payload.name,
     previewUrl: payload.previewUrl || mockHelpers.templatePreview("ATTENDANCE", "#4267b2", "#159568"),
     type: payload.type,
     status: payload.status ?? "active",
-    isDefault: payload.isDefault ?? program.templates.length === 0,
+    isDefault,
   };
-  if (template.isDefault) program.templates.forEach((item) => (item.isDefault = false));
-  program.templates = [...program.templates, template];
+  if (isDefault) templates.forEach((item) => { if (item.programId === programId) item.isDefault = false; });
+  templates = [...templates, template];
   return delay(clone(template));
 };
 
 export const setDefaultTemplate = (programId: string, templateId: string) => {
-  const program = requireProgram(programId);
-  program.templates.forEach((item) => (item.isDefault = item.id === templateId));
-  return delay(clone(program.templates));
+  requireProgramBase(programId);
+  templates.forEach((item) => { if (item.programId === programId) item.isDefault = item.id === templateId; });
+  return delay(clone(templates.filter((t) => t.programId === programId)));
+};
+
+export const assignTemplate = (templateId: string, programId: string) => {
+  requireProgramBase(programId);
+  const template = templates.find((item) => item.id === templateId);
+  if (!template) throw new Error("Template not found.");
+  const hasDefaultAlready = templates.some((item) => item.programId === programId && item.isDefault);
+  template.programId = programId;
+  template.isDefault = !hasDefaultAlready;
+  return delay(clone(template));
 };
 
 // ---- Generations ----
@@ -125,9 +149,10 @@ export async function generateAttendance(
   slug: string,
   payload: GenerateAttendancePayload,
 ): Promise<GenerateAttendanceResult> {
-  const program = programs.find((item) => item.slug === slug);
+  const program = programsBase.find((item) => item.slug === slug);
   if (!program) throw new Error("Program not found.");
-  const template = program.templates.find((item) => item.id === payload.templateId) ?? program.templates[0];
+  const programTemplates = templates.filter((t) => t.programId === program.id);
+  const template = programTemplates.find((item) => item.id === payload.templateId) ?? programTemplates[0];
 
   const photoUrl = payload.photo ? await readFileAsDataUrl(payload.photo) : undefined;
   const canvas = await composeAttendanceCanvas({
@@ -168,7 +193,7 @@ export function getPublicGeneration(generationId: string): Promise<PublicGenerat
   const generation = generations.find((item) => item.id === generationId);
   if (!generation) return Promise.reject(new Error("This attendance card does not exist."));
 
-  const program = programs.find((item) => item.id === generation.programId);
+  const program = programsBase.find((item) => item.id === generation.programId);
   if (!program) return Promise.reject(new Error("Program not found."));
 
   if (generation.expiresAt && new Date(generation.expiresAt) < new Date()) {

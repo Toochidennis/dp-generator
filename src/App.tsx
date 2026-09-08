@@ -2,10 +2,13 @@ import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Seo } from "@/shared/components/Seo";
 import { LoadingState } from "@/shared/components/ui/states";
+import { HomePage } from "@/public/pages/HomePage";
+import { EventPage } from "@/public/pages/EventPage";
 import { LandingPage } from "@/public/pages/LandingPage";
 import { BadgePage } from "@/public/pages/BadgePage";
 import { CertificatePage } from "@/public/pages/CertificatePage";
 
+const AdminLoginPage = lazy(() => import("@/admin/pages/AdminLoginPage").then((m) => ({ default: m.AdminLoginPage })));
 const AdminLayout = lazy(() => import("@/admin/AdminLayout").then((m) => ({ default: m.AdminLayout })));
 const DashboardPage = lazy(() => import("@/admin/pages/DashboardPage").then((m) => ({ default: m.DashboardPage })));
 const ProgramsPage = lazy(() => import("@/admin/pages/ProgramsPage").then((m) => ({ default: m.ProgramsPage })));
@@ -26,15 +29,15 @@ function NotFound() {
   return (
     <div className="grid min-h-screen place-items-center bg-[#f3f7fc] p-6 text-center">
       <Seo
-        title="Page Not Found | Kids Coding Bootcamp"
-        description="The requested Kids Coding Bootcamp page could not be found."
+        title="Page Not Found | Digital Dreams Events"
+        description="The requested page could not be found."
         path="/404"
         robots="noindex, nofollow"
       />
       <div>
         <p className="font-[Manrope] text-5xl font-extrabold text-slate-300">404</p>
         <p className="mt-2 text-sm font-bold text-slate-600">This page could not be found.</p>
-        <a href="/" className="mt-4 inline-block rounded-xl bg-[#4267b2] px-4 py-2.5 text-xs font-bold text-white">Back to the bootcamp</a>
+        <a href="/" className="mt-4 inline-block rounded-xl bg-[#1b3a9e] px-4 py-2.5 text-xs font-bold text-white">Back home</a>
       </div>
     </div>
   );
@@ -44,12 +47,19 @@ export default function App() {
   return (
     <Suspense fallback={<FullPageLoader />}>
       <Routes>
-        {/* Public microsite — Kids Coding Bootcamp */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/badge" element={<BadgePage />} />
-        <Route path="/certificate" element={<CertificatePage />} />
+        {/* Public portal — lists every Digital Dreams event */}
+        <Route path="/" element={<HomePage />} />
+
+        {/* Kids Coding Bootcamp — its own bespoke microsite */}
+        <Route path="/events/kids-coding-bootcamp" element={<LandingPage />} />
+        <Route path="/events/kids-coding-bootcamp/badge" element={<BadgePage />} />
+        <Route path="/events/kids-coding-bootcamp/certificate" element={<CertificatePage />} />
+
+        {/* Any other event — generic info page until it gets a bespoke one */}
+        <Route path="/events/:slug" element={<EventPage />} />
 
         {/* Admin */}
+        <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="programs" element={<ProgramsPage />} />

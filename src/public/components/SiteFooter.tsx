@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Calendar, Instagram, MapPin, Phone } from "lucide-react";
-import { event, footerLinks } from "@/public/data/event";
+import { EVENT_BASE_PATH, event, footerLinks } from "@/public/data/event";
 
 export function SiteFooter() {
   return (
@@ -68,7 +68,7 @@ export function SiteFooter() {
               </li>
             </ul>
             <Link
-              to="/badge"
+              to={`${EVENT_BASE_PATH}/badge`}
               className="kc-btn mt-6 border-white/0 bg-brand text-ink text-sm shadow-[0_5px_0_0_#000] hover:bg-brand-dark"
             >
               Generate your badge <ArrowUpRight size={16} />

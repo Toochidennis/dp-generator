@@ -15,7 +15,7 @@ type Props = {
 };
 
 export function TemplateFormModal({ open, onClose, programId, programs, onSaved }: Props) {
-  const [selectedProgram, setSelectedProgram] = useState(programId ?? programs?.[0]?.id ?? "");
+  const [selectedProgram, setSelectedProgram] = useState(programId ?? "");
   const [name, setName] = useState("");
   const [type, setType] = useState<TemplateType>("image");
   const [previewUrl, setPreviewUrl] = useState<string>();
@@ -34,10 +34,6 @@ export function TemplateFormModal({ open, onClose, programId, programs, onSaved 
   };
 
   const submit = async () => {
-    if (!selectedProgram) {
-      setError("Select a program for this template.");
-      return;
-    }
     if (!name.trim()) {
       setError("Template name is required.");
       return;
@@ -46,7 +42,7 @@ export function TemplateFormModal({ open, onClose, programId, programs, onSaved 
     setError(undefined);
     try {
       const template = await templateService.createTemplate({
-        programId: selectedProgram,
+        programId: selectedProgram || null,
         name: name.trim(),
         previewUrl: previewUrl ?? "",
         type,
@@ -65,9 +61,9 @@ export function TemplateFormModal({ open, onClose, programId, programs, onSaved 
     <Modal open={open} onClose={onClose} title="Upload template" description="Templates define the look of generated cards.">
       <div className="space-y-4">
         {!programId && programs && (
-          <Field label="Program">
+          <Field label="Program" hint="optional, assign it later if you're not sure yet">
             <select value={selectedProgram} onChange={(e) => setSelectedProgram(e.target.value)} className="text-input">
-              <option value="" disabled>Select a program…</option>
+              <option value="">No program yet</option>
               {programs.map((program) => (
                 <option key={program.id} value={program.id}>{program.title}</option>
               ))}
@@ -82,7 +78,7 @@ export function TemplateFormModal({ open, onClose, programId, programs, onSaved 
         <Field label="Type">
           <div className="flex gap-2">
             {(["image", "pdf"] as TemplateType[]).map((value) => (
-              <button key={value} type="button" onClick={() => setType(value)} className={`flex-1 rounded-xl border px-3 py-2.5 text-xs font-bold uppercase transition ${type === value ? "border-[#4267b2] bg-blue-50 text-[#4267b2]" : "border-slate-200 bg-white text-slate-500"}`}>
+              <button key={value} type="button" onClick={() => setType(value)} className={`flex-1 rounded-xl border px-3 py-2.5 text-xs font-bold uppercase transition ${type === value ? "border-[#1b3a9e] bg-blue-50 text-[#1b3a9e]" : "border-slate-200 bg-white text-slate-500"}`}>
                 {value}
               </button>
             ))}
@@ -90,22 +86,28 @@ export function TemplateFormModal({ open, onClose, programId, programs, onSaved 
         </Field>
         <p className="rounded-xl bg-slate-50 px-3 py-2 text-[11px] font-medium text-slate-500">Every attendance card includes the participant's photo.</p>
 
-        <Field label="Preview image" hint="optional — a placeholder is used if empty">
+        <Field label="Preview image" hint="optional, a placeholder is used if empty">
           <div className="flex items-center gap-3">
             <div className="size-20 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
               {previewUrl ? <img src={previewUrl} alt="Preview" className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center text-slate-300"><ImagePlus size={18} /></div>}
             </div>
-            <label className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 hover:border-[#4267b2] hover:text-[#4267b2]">
+            <label className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 hover:border-[#1b3a9e] hover:text-[#1b3a9e]">
               {previewUrl ? "Replace image" : "Upload image"}
               <input type="file" accept="image/*" className="sr-only" onChange={(e) => void onPreview(e.target.files?.[0])} />
             </label>
           </div>
         </Field>
 
-        <label className="flex items-center gap-2 text-xs font-bold text-slate-600">
-          <input type="checkbox" checked={makeDefault} onChange={(e) => setMakeDefault(e.target.checked)} className="size-4 rounded border-slate-300" />
-          Set as the program's default template
-        </label>
+        {(programId || selectedProgram) ? (
+          <label className="flex items-center gap-2 text-xs font-bold text-slate-600">
+            <input type="checkbox" checked={makeDefault} onChange={(e) => setMakeDefault(e.target.checked)} className="size-4 rounded border-slate-300" />
+            Set as the program's default template
+          </label>
+        ) : (
+          <p className="rounded-xl bg-slate-50 px-3 py-2 text-[11px] font-medium text-slate-500">
+            No program selected. This template will be saved unassigned, you can attach it to a program later.
+          </p>
+        )}
 
         {error && <p className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600">{error}</p>}
 

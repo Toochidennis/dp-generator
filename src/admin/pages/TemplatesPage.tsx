@@ -15,15 +15,32 @@ export function TemplatesPage() {
   const templatesQuery = useAsyncData((signal) => templateService.getTemplates(signal), []);
   const [adding, setAdding] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [assigning, setAssigning] = useState<Record<string, boolean>>({});
 
   const programs = useMemo(() => programsQuery.data ?? [], [programsQuery.data]);
-  const programName = (id: string) => programs.find((p) => p.id === id)?.title ?? "—";
+  const programName = (id: string | null) => (id ? programs.find((p) => p.id === id)?.title ?? "—" : undefined);
 
-  const templates = (templatesQuery.data ?? []).filter((t) => filter === "all" || t.programId === filter);
+  const templates = (templatesQuery.data ?? []).filter((t) => {
+    if (filter === "all") return true;
+    if (filter === "unassigned") return !t.programId;
+    return t.programId === filter;
+  });
 
   const makeDefault = async (template: ProgramTemplate) => {
+    if (!template.programId) return;
     await templateService.setDefaultTemplate(template.programId, template.id);
     templatesQuery.reload();
+  };
+
+  const assign = async (template: ProgramTemplate, programId: string) => {
+    if (!programId) return;
+    setAssigning((prev) => ({ ...prev, [template.id]: true }));
+    try {
+      await templateService.assignTemplate(template.id, programId);
+      templatesQuery.reload();
+    } finally {
+      setAssigning((prev) => ({ ...prev, [template.id]: false }));
+    }
   };
 
   const onAdded = () => templatesQuery.reload();
@@ -32,26 +49,25 @@ export function TemplatesPage() {
     <div className="space-y-6">
       <PageHeader
         title="Templates"
-        subtitle="Designs available across your programs."
-        actions={<Button onClick={() => setAdding(true)} disabled={programs.length === 0}><Plus size={15} /> Upload template</Button>}
+        subtitle="Designs available across your programs. Upload one anytime, attach it to a program whenever you're ready."
+        actions={<Button onClick={() => setAdding(true)}><Plus size={15} /> Upload template</Button>}
       />
 
-      {programs.length > 0 && (
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-400">Filter:</span>
-          <select value={filter} onChange={(e) => setFilter(e.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600">
-            <option value="all">All programs</option>
-            {programs.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
-          </select>
-        </div>
-      )}
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-bold text-slate-400">Filter:</span>
+        <select value={filter} onChange={(e) => setFilter(e.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600">
+          <option value="all">All templates</option>
+          <option value="unassigned">Unassigned</option>
+          {programs.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
+        </select>
+      </div>
 
       {templatesQuery.status === "loading" ? (
         <LoadingState label="Loading templates…" />
       ) : templatesQuery.status === "error" ? (
         <ErrorState message={templatesQuery.error} onRetry={templatesQuery.reload} />
       ) : templates.length === 0 ? (
-        <EmptyState icon={<LayoutTemplate size={22} />} title="No templates" description="Upload a template and attach it to a program." action={programs.length > 0 ? <Button onClick={() => setAdding(true)}><Plus size={15} /> Upload template</Button> : undefined} />
+        <EmptyState icon={<LayoutTemplate size={22} />} title="No templates" description="Upload a template to get started. You can attach it to a program now or later." action={<Button onClick={() => setAdding(true)}><Plus size={15} /> Upload template</Button>} />
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {templates.map((template) => (
@@ -62,13 +78,28 @@ export function TemplatesPage() {
               </div>
               <div className="p-3">
                 <p className="truncate text-sm font-bold text-slate-800">{template.name}</p>
-                <Link to={`/admin/programs/${template.programId}?tab=templates`} className="block truncate text-[11px] font-semibold text-[#4267b2] hover:underline">{programName(template.programId)}</Link>
+                {template.programId ? (
+                  <Link to={`/admin/programs/${template.programId}?tab=templates`} className="block truncate text-[11px] font-semibold text-[#1b3a9e] hover:underline">{programName(template.programId)}</Link>
+                ) : (
+                  <span className="block truncate text-[11px] font-semibold uppercase tracking-wide text-slate-400">Unassigned</span>
+                )}
                 <div className="mt-1.5 flex items-center gap-2 text-[10px] font-semibold uppercase text-slate-400">
                   <StatusBadge status={template.status} />
                   <span>{template.type}</span>
                 </div>
-                {!template.isDefault && template.status === "active" && (
+                {!template.isDefault && template.status === "active" && template.programId && (
                   <button type="button" onClick={() => void makeDefault(template)} className="mt-2 w-full rounded-lg border border-slate-200 px-2 py-1.5 text-[11px] font-bold text-slate-500 hover:border-amber-300 hover:text-amber-600">Make default</button>
+                )}
+                {!template.programId && programs.length > 0 && (
+                  <select
+                    defaultValue=""
+                    disabled={assigning[template.id]}
+                    onChange={(e) => void assign(template, e.target.value)}
+                    className="mt-2 w-full rounded-lg border border-slate-200 px-2 py-1.5 text-[11px] font-bold text-slate-500 disabled:opacity-50"
+                  >
+                    <option value="" disabled>Attach to program…</option>
+                    {programs.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
+                  </select>
                 )}
               </div>
             </div>

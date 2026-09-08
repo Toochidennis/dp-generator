@@ -26,6 +26,7 @@ import { accentBg, accentText, accentTint } from "@/public/lib/accents";
 import { Seo } from "@/shared/components/Seo";
 import { bootcampSeoDefaults, landingSeo, landingStructuredData } from "@/public/seo";
 import {
+  EVENT_BASE_PATH,
   about,
   codeBlocks,
   event,
@@ -97,7 +98,7 @@ function Hero() {
           </dl>
 
           <div className="mt-9 flex flex-wrap items-center gap-3">
-            <Link to="/badge" className="kc-btn bg-brand text-ink hover:bg-brand-dark">
+            <Link to={`${EVENT_BASE_PATH}/badge`} className="kc-btn bg-brand text-ink hover:bg-brand-dark">
               Generate your badge <ArrowUpRight size={18} />
             </Link>
             <a href="#learn" className="kc-btn bg-white text-ink hover:bg-paper">
@@ -384,7 +385,7 @@ function CtaBand() {
           >
             Register now <ArrowUpRight size={18} />
           </a>
-          <Link to="/badge" className="kc-btn border-white/20 bg-white/10 text-white hover:bg-white/15">
+          <Link to={`${EVENT_BASE_PATH}/badge`} className="kc-btn border-white/20 bg-white/10 text-white hover:bg-white/15">
             Generate your badge <ArrowRight size={17} />
           </Link>
         </div>
@@ -403,7 +404,7 @@ export function LandingPage() {
   const ref = useReveal<HTMLDivElement>();
   return (
     <div ref={ref} className="kc min-h-screen">
-      <Seo {...bootcampSeoDefaults} {...landingSeo} path="/" jsonLd={landingStructuredData()} />
+      <Seo {...bootcampSeoDefaults} {...landingSeo} path={EVENT_BASE_PATH} jsonLd={landingStructuredData()} />
       <SiteNav variant="landing" />
       <main>
         <Hero />

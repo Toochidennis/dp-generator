@@ -8,7 +8,8 @@ export type TemplateType = "image" | "pdf";
 
 export type ProgramTemplate = {
   id: string;
-  programId: string;
+  /** null while the template hasn't been assigned to a program yet. */
+  programId: string | null;
   name: string;
   previewUrl: string;
   type: TemplateType;
@@ -62,7 +63,8 @@ export type CreateProgramPayload = {
 export type UpdateProgramPayload = Partial<CreateProgramPayload>;
 
 export type CreateTemplatePayload = {
-  programId: string;
+  /** Omit to upload without assigning to a program yet. */
+  programId?: string | null;
   name: string;
   previewUrl: string;
   type: TemplateType;

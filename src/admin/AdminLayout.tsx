@@ -1,9 +1,11 @@
-import { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
-import { CalendarRange, FileStack, LayoutDashboard, LayoutTemplate, Menu, Settings, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { CalendarRange, FileStack, LayoutDashboard, LayoutTemplate, LogOut, Menu, Settings, X } from "lucide-react";
 import { BrandMark } from "@/shared/components/BrandMark";
 import { Seo } from "@/shared/components/Seo";
+import { LoadingState } from "@/shared/components/ui/states";
 import { USE_MOCKS } from "@/shared/services/config";
+import { authService } from "@/shared/services/authService";
 
 const nav = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
@@ -23,7 +25,7 @@ function NavItems({ onNavigate }: { onNavigate?: () => void }) {
           end={end}
           onClick={onNavigate}
           className={({ isActive }) =>
-            `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition ${isActive ? "bg-[#4267b2] text-white shadow-md shadow-blue-100" : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"}`
+            `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition ${isActive ? "bg-[#1b3a9e] text-white shadow-md shadow-blue-100" : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"}`
           }
         >
           <Icon size={18} />
@@ -36,12 +38,40 @@ function NavItems({ onNavigate }: { onNavigate?: () => void }) {
 
 export function AdminLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [checked, setChecked] = useState(USE_MOCKS);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (USE_MOCKS) return;
+    let alive = true;
+    authService.me().then((session) => {
+      if (!alive) return;
+      if (!session) navigate("/admin/login", { replace: true });
+      else setChecked(true);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [navigate]);
+
+  const signOut = async () => {
+    await authService.logout();
+    navigate("/admin/login", { replace: true });
+  };
+
+  if (!checked) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-[#f3f7fc]">
+        <LoadingState label="Checking session…" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f3f7fc] lg:flex">
       <Seo
-        title="Admin | Attendance Generator"
-        description="Private administration area for managing programs, templates and generated attendance badges."
+        title="Admin | Digital Dreams Events"
+        description="Private administration area for managing Digital Dreams events, templates and generated attendance badges."
         path="/admin"
         robots="noindex, nofollow"
       />
@@ -51,13 +81,18 @@ export function AdminLayout() {
           <BrandMark />
         </div>
         <div className="px-3 py-4">
-          <p className="px-3 pb-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Attendance Generator</p>
+          <p className="px-3 pb-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Digital Dreams Events</p>
           <NavItems />
         </div>
-        <div className="mt-auto p-4">
+        <div className="mt-auto space-y-2 p-4">
           <div className={`rounded-xl border p-3 text-[11px] font-semibold ${USE_MOCKS ? "border-amber-200 bg-amber-50 text-amber-700" : "border-emerald-200 bg-emerald-50 text-emerald-700"}`}>
-            {USE_MOCKS ? "Mock data mode — backend not connected" : "Connected to live API"}
+            {USE_MOCKS ? "Mock data mode. Backend not connected." : "Connected to live API"}
           </div>
+          {!USE_MOCKS && (
+            <button type="button" onClick={() => void signOut()} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800">
+              <LogOut size={18} /> Sign out
+            </button>
+          )}
         </div>
       </aside>
 

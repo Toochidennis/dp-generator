@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Menu, X } from "lucide-react";
-import { event, footerLinks } from "@/public/data/event";
+import { EVENT_BASE_PATH, event, footerLinks } from "@/public/data/event";
 
 function Logo() {
   return (
-    <Link to="/" className="inline-flex items-center gap-2.5" aria-label={`${event.brand} — home`}>
+    <Link to={EVENT_BASE_PATH} className="inline-flex items-center gap-2.5" aria-label={`${event.brand} — home`}>
       <span className="inline-flex items-center rounded-xl border-2 border-ink bg-ink px-2.5 py-1.5">
         <img src="/images/digital-dreams-logo.png" alt="Digital Dreams" className="h-5 w-auto object-contain sm:h-[22px]" />
       </span>
@@ -61,7 +61,7 @@ export function SiteNav({ variant = "landing" }: { variant?: "landing" | "sub" }
         {/* Right: badge CTA + mobile menu toggle — landing only. */}
         {!isSub && (
           <div className="flex items-center gap-2">
-            <Link to="/badge" className="kc-btn bg-brand text-ink text-sm hover:bg-brand-dark">
+            <Link to={`${EVENT_BASE_PATH}/badge`} className="kc-btn bg-brand text-ink text-sm hover:bg-brand-dark">
               Generate badge
               <ArrowUpRight size={17} />
             </Link>

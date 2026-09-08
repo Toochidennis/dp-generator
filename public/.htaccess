@@ -1,0 +1,10 @@
+RewriteEngine On
+
+# Real PHP endpoints and uploaded files are served as-is.
+RewriteRule ^api/ - [L]
+RewriteRule ^uploads/ - [L]
+
+# Everything else is a client-side route — fall back to the SPA shell.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]
