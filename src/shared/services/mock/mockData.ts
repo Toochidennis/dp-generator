@@ -79,6 +79,22 @@ const now = () => new Date().toISOString();
 
 export const seedPrograms: ProgramSeed[] = [
   {
+    // Mirrors the real program seeded in api/helpers.php so the mock/dev
+    // experience matches production: this is the one bespoke microsite
+    // (see EVENT_BASE_PATH in public/data/event.ts), everything else here
+    // is demo data for the generic /events/:slug page.
+    id: "prog_kids_coding_bootcamp",
+    title: "Kids Coding Bootcamp",
+    slug: "kids-coding-bootcamp",
+    description: "A hands-on coding bootcamp, onsite and online, where curious kids go from playing games to building them, guided by Digital Dreams coaches who've trained Nigeria's developers since 2007.",
+    startDate: "2026-07-01",
+    bannerUrl: "/images/kids-coding-bootcamp-card.png",
+    status: "active",
+    attendanceText: "{{name}} is attending {{programName}}",
+    generationCount: 0,
+    createdAt: "2026-05-01T09:00:00Z",
+  },
+  {
     id: "prog_001",
     title: "Digital Dreams Tech Bootcamp 2026",
     slug: "digital-dreams-tech-bootcamp-2026",
@@ -111,7 +127,10 @@ export const seedPrograms: ProgramSeed[] = [
     description: "A week celebrating innovators, makers, and startups across the South-East.",
     startDate: "2026-11-03",
     endDate: "2026-11-07",
-    bannerUrl: banner("Innovation Week", "#0f766e", "#4267b2"),
+    // No banner on purpose: this is the demo program that shows off the
+    // generic EventPage's real-photo fallback (see EventPage.tsx) instead of
+    // an uploaded banner.
+    bannerUrl: undefined,
     status: "draft",
     attendanceText: "{{name}} is joining {{programName}}",
     generationCount: 0,

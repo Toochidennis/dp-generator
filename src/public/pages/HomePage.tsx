@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ArrowUpRight, CalendarRange, Instagram, MapPin, Menu, Phone, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CalendarRange, GraduationCap, Instagram, MapPin, Menu, Phone, X } from "lucide-react";
 import type { Program } from "@/shared/types/domain";
 import { programService } from "@/shared/services/programService";
 import { useAsyncData } from "@/shared/hooks/useAsyncData";
@@ -112,21 +112,42 @@ function Hero() {
         />
       </div>
 
-      <div className={`relative pb-20 pt-16 text-center sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24 ${CONTAINER}`}>
-        <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#1b3a9e]">
-          Digital Dreams &times; LinkSkool
-        </span>
-        <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-          Every Digital Dreams event, one home.
-        </h1>
-        <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-slate-500 sm:text-lg">
-          Let&apos;s make your dream a reality. Pick a program below to see what it&apos;s about, who it&apos;s for, and how
-          to get your attendance card.
-        </p>
-        <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-          <a href="#events" className={`inline-flex items-center gap-2 rounded-full bg-[#1b3a9e] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#16307f] ${BTN_GLOW}`}>
-            See all events <ArrowRight size={16} />
-          </a>
+      <div className={`relative grid items-center gap-12 py-16 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10 lg:py-24 ${CONTAINER}`}>
+        <div className="text-center lg:text-left">
+          <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#1b3a9e]">
+            Digital Dreams &times; LinkSkool
+          </span>
+          <h1 className="mx-auto mt-6 max-w-xl text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:mx-0 lg:text-6xl">
+            Every Digital Dreams event, one home.
+          </h1>
+          <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-slate-500 sm:text-lg lg:mx-0">
+            Let&apos;s make your dream a reality. Pick a program below to see what it&apos;s about, who it&apos;s for, and how
+            to get your attendance card.
+          </p>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+            <a href="#events" className={`inline-flex items-center gap-2 rounded-full bg-[#1b3a9e] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#16307f] ${BTN_GLOW}`}>
+              See all events <ArrowRight size={16} />
+            </a>
+          </div>
+        </div>
+
+        <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
+          <div className="overflow-hidden rounded-[20px] border border-slate-200/80 bg-white p-2 shadow-[0_30px_70px_-30px_rgba(15,23,42,0.35)]">
+            <img
+              src="/images/event-training-session.jpg"
+              alt="Participants working at laptops during a Digital Dreams session"
+              className="aspect-[4/3] w-full rounded-2xl object-cover"
+            />
+          </div>
+          <div className="absolute -bottom-5 -left-5 hidden items-center gap-3 rounded-2xl border border-slate-200/80 bg-white px-4 py-3 shadow-[0_18px_40px_-18px_rgba(15,23,42,0.3)] sm:flex">
+            <span className="grid size-9 place-items-center rounded-full bg-blue-50 text-[#1b3a9e]">
+              <GraduationCap size={18} />
+            </span>
+            <div>
+              <p className="text-sm font-semibold leading-none text-slate-900">17+ years</p>
+              <p className="mt-1 text-[11px] font-medium text-slate-500">training developers</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -221,13 +242,22 @@ function About() {
             each with its own page and its own downloadable attendance card.
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          {stats.map((stat) => (
-            <div key={stat.label} className={`p-5 ${CARD}`}>
-              <p className="text-2xl font-semibold tracking-tight text-[#1b3a9e]">{stat.value}</p>
-              <p className="mt-1 text-xs font-medium text-slate-500">{stat.label}</p>
-            </div>
-          ))}
+        <div>
+          <div className="overflow-hidden rounded-[20px] border border-slate-200/80 shadow-[0_20px_50px_-24px_rgba(15,23,42,0.3)]">
+            <img
+              src="/images/event-computer-lab.jpg"
+              alt="Participants at a Digital Dreams computer lab session"
+              className="aspect-[16/10] w-full object-cover"
+            />
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
+            {stats.map((stat) => (
+              <div key={stat.label} className={`p-4 ${CARD}`}>
+                <p className="text-xl font-semibold tracking-tight text-[#1b3a9e]">{stat.value}</p>
+                <p className="mt-1 text-[11px] font-medium leading-tight text-slate-500">{stat.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -171,7 +171,7 @@ function seed_programs(): array {
         'description' => "A hands-on coding bootcamp — onsite and online — where curious kids go from playing games to building them, guided by Digital Dreams coaches who've trained Nigeria's developers since 2007.",
         'startDate' => '2026-07-01',
         'endDate' => null,
-        'bannerUrl' => null,
+        'bannerUrl' => '/images/kids-coding-bootcamp-card.png',
         'status' => 'active',
         'attendanceText' => '{{name}} is attending {{programName}}',
         'generationCount' => 0,
